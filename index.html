@@ -100,6 +100,11 @@
   .lnk .rip{background:rgba(10,10,11,.18)}
   @keyframes rip{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
 
+  /* salida al navegar en la misma pestaña */
+  body.leaving main{opacity:0;transform:translateY(-6px);
+    transition:opacity .26s ease, transform .26s ease}
+  body.leaving #bg,body.leaving #grain{opacity:.35;transition:opacity .26s ease}
+
   @media (prefers-reduced-motion:reduce){
     .lnk::before{animation:none;display:none}
     .lnk,.arw,.lnk::after{transition-duration:.01s}
@@ -117,6 +122,11 @@
   .d1{animation-delay:.15s}.d2{animation-delay:.35s}.d3{animation-delay:.55s}
   .d4{animation-delay:.78s}.d5{animation-delay:.98s}.d6{animation-delay:1.15s}
   @keyframes in{to{opacity:1;transform:none}}
+  /* salida al navegar en la misma pestaña */
+  body.leaving main{opacity:0;transform:translateY(-6px);
+    transition:opacity .26s ease, transform .26s ease}
+  body.leaving #bg,body.leaving #grain{opacity:.35;transition:opacity .26s ease}
+
   @media (prefers-reduced-motion:reduce){.fade{animation:none;opacity:1;transform:none}}
   @media (max-height:640px){
     .hr{margin:18px 0}.marks{gap:22px}.foot{margin-top:18px}
@@ -131,7 +141,7 @@
 
 <main>
   <div class="links fade d1">
-    <a class="lnk" href="https://leopisani.myportfolio.com" target="_blank" rel="noopener">
+    <a class="lnk" id="port" href="https://leopisani.myportfolio.com" data-same="1">
 <span class="label">Portfolio</span><span class="arw">→</span></a>
     <a class="lnk" id="wa" target="_blank" rel="noopener">
 <span class="label">WhatsApp</span><span class="arw">→</span></a>
@@ -143,6 +153,25 @@
 "use strict";
 document.getElementById('wa').href='https://wa.me/5491151183272?text='+
   encodeURIComponent('Hola Leo! Vi tu portfolio y quiero consultarte por un proyecto.');
+
+/* =========================================================================
+   NAVEGACIÓN
+   El portfolio abre en la misma pestaña: la portada es un puente, no un lugar
+   al que volver, y así el botón "atrás" hace lo esperable.
+   WhatsApp abre aparte, para que la portada siga viva cuando vuelvan del chat.
+   ========================================================================= */
+document.querySelectorAll('a[data-same]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    /* respetar clic con modificadores, rueda del mouse y clic derecho */
+    if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey) return;
+    e.preventDefault();
+    const url=a.href;
+    document.body.classList.add('leaving');
+    setTimeout(()=>{ location.href=url; },240);
+    /* red aparte: si algo falla, igual navega */
+    setTimeout(()=>{ if(!document.hidden) location.href=url; },1400);
+  });
+});
 
 /* =========================================================================
    REACCIÓN DE LOS ACCESOS
