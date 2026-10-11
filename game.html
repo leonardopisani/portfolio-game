@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Forest Snap</title>
+<style>
+  :root{
+    --ink:#F4F2EC;
+    --mut:#B3AFA4;
+    --dim:#77736A;
+    --bg:#07090A;
+    --panel:rgba(10,12,12,.58);
+    --line:rgba(244,242,236,.22);
+    --accent:#FFC93C;
+    --good:#62E59A;
+    --bad:#FF6B5E;
+    color-scheme:dark;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{
+    height:100%;width:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+    touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;
+    font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI",Roboto,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  .hidden{display:none !important}
+
+  #cam{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+  #gl{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+  /* visor */
+  #vf{position:fixed;inset:0;pointer-events:none;z-index:4}
+  .corner{position:absolute;width:28px;height:28px;border:0 solid rgba(255,255,255,.8)}
+  .c1{top:calc(70px + env(safe-area-inset-top));left:16px;border-top-width:2px;border-left-width:2px}
+  .c2{top:calc(70px + env(safe-area-inset-top));right:16px;border-top-width:2px;border-right-width:2px}
+  .c3{bottom:calc(132px + env(safe-area-inset-bottom));left:16px;border-bottom-width:2px;border-left-width:2px}
+  .c4{bottom:calc(132px + env(safe-area-inset-bottom));right:16px;border-bottom-width:2px;border-right-width:2px}
+  #reticle{position:absolute;left:50%;top:50%;width:58px;height:58px;margin:-29px 0 0 -29px;
+    border:1.5px solid rgba(255,255,255,.65);border-radius:50%;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+  #reticle::after{content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:rgba(255,255,255,.8)}
+  #reticle.lock{border-color:var(--accent);transform:scale(.82)}
+  #reticle.lock::after{background:var(--accent)}
+  #reticle.special{box-shadow:0 0 0 4px rgba(255,201,60,.25),0 0 22px rgba(255,201,60,.7)}
+
+  /* indicadores de criaturas fuera de cuadro */
+  .hint{position:fixed;left:0;top:0;width:44px;height:44px;border-radius:50%;z-index:6;pointer-events:none;
+    background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;font-size:22px;
+    opacity:0;transition:opacity .25s ease;will-change:transform}
+  .hint.on{opacity:1}
+  .hint span{line-height:1}
+  .hint-arrow{position:absolute;inset:0}
+  .hint-arrow::after{content:"";position:absolute;right:-9px;top:50%;margin-top:-6px;
+    border-left:8px solid var(--accent);border-top:6px solid transparent;border-bottom:6px solid transparent}
+
+  /* barra superior */
+  #top{position:fixed;left:0;right:0;top:0;z-index:10;display:flex;justify-content:space-between;align-items:flex-start;
+    gap:10px;padding:calc(12px + env(safe-area-inset-top)) 16px 0;pointer-events:none}
+  .pill{background:var(--panel);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);
+    border-radius:999px;padding:8px 14px;font-size:13px;display:flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+  .pill b{font-weight:700}
+  #scoreVal{color:var(--accent)}
+  #timeWrap{display:flex;flex-direction:column;gap:5px;align-items:stretch}
+  #timeBar{height:3px;border-radius:2px;background:rgba(255,255,255,.18);overflow:hidden}
+  #timeFill{height:100%;width:100%;background:var(--good);transform-origin:left;will-change:transform}
+  #timeFill.low{background:var(--bad)}
+  #mode{position:fixed;left:50%;top:calc(58px + env(safe-area-inset-top));transform:translateX(-50%);z-index:10;
+    font-size:11px;color:var(--mut);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px;
+    white-space:nowrap;pointer-events:none;transition:opacity .6s ease}
+  #mode.faded{opacity:.45}
+
+  /* barra inferior */
+  #bottom{position:fixed;left:0;right:0;bottom:0;z-index:10;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+    padding:0 24px calc(26px + env(safe-area-inset-bottom));pointer-events:none}
+  #lastThumb{justify-self:start;width:50px;height:50px;border-radius:10px;border:2px solid #fff;overflow:hidden;background:#222;
+    opacity:0;transform:scale(.6);transition:opacity .25s ease,transform .25s ease}
+  #lastThumb.on{opacity:1;transform:none}
+  #lastThumb img{width:100%;height:100%;object-fit:cover;display:block}
+  #shutter{pointer-events:auto;width:80px;height:80px;border-radius:50%;border:4px solid #fff;display:grid;place-items:center;
+    box-shadow:0 4px 18px rgba(0,0,0,.45)}
+  #shutter span{width:62px;height:62px;border-radius:50%;background:#fff;transition:transform .09s ease,background .2s ease}
+  #shutter:active span{transform:scale(.84)}
+  #shutter.empty span{background:#5a5a5a}
+  #recal{justify-self:end;pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-size:11px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:7px 10px}
+  #recal span{font-size:20px;line-height:1}
+  #recal:active{transform:scale(.94)}
+  #gyroWarn{position:fixed;left:50%;top:calc(92px + env(safe-area-inset-top));transform:translateX(-50%);z-index:11;
+    width:max-content;max-width:calc(100% - 32px);font-size:13px;font-weight:600;line-height:1.4;text-align:center;
+    padding:9px 14px;border-radius:12px;background:rgba(60,14,10,.82);border:1px solid var(--bad);color:#FFD9D4;pointer-events:none}
+  .warn{font-size:14px;font-weight:600;line-height:1.45;text-align:center;padding:12px 14px;border-radius:14px;
+    background:rgba(255,107,94,.12);border:1px solid var(--bad);color:#FFD9D4}
+
+  #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:20}
+
+  /* resultado de cada foto */
+  #toast{position:fixed;left:50%;top:calc(60px + env(safe-area-inset-top));z-index:21;pointer-events:none;width:min(300px,calc(100% - 32px));
+    transform:translate(-50%,-10px);opacity:0;transition:opacity .2s ease,transform .2s ease;
+    background:var(--panel);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);
+    border-radius:16px;padding:10px 12px;text-align:center}
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+  #toastPts{display:inline;font-size:28px;font-weight:800;letter-spacing:-.01em;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.1}
+  #toastStars{display:inline;font-size:16px;letter-spacing:3px;color:var(--accent);margin-left:8px;vertical-align:4px}
+  #toastTag{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-top:4px;color:var(--good)}
+  #toastTag.bad{color:var(--bad)}
+  #toastChips{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:8px}
+  .chip{font-size:11px;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+
+  #notice{position:fixed;left:50%;bottom:calc(122px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;
+    max-width:calc(100% - 32px);font-size:12px;line-height:1.4;text-align:center;padding:8px 12px;border-radius:12px;
+    background:var(--panel);border:1px solid var(--line);color:var(--ink);opacity:0;transition:opacity .3s ease;pointer-events:none}
+  #notice.on{opacity:1}
+
+  /* pantallas */
+  .screen{position:fixed;inset:0;z-index:30;background:radial-gradient(120% 80% at 50% 0%,#14251d 0%,#08110d 55%,#040706 100%);
+    overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;
+    padding:calc(28px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(32px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left))}
+  .wrap{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+  #intro .wrap{min-height:100%;justify-content:center}
+  .emoji-row{font-size:34px;display:flex;justify-content:center;gap:12px}
+  h1{font-size:clamp(34px,11vw,48px);font-weight:800;letter-spacing:-.02em;text-align:center;line-height:1}
+  h1 em{font-style:normal;color:var(--accent)}
+  .lead{font-size:15px;line-height:1.5;color:var(--mut);text-align:center;text-wrap:balance}
+  .rules{list-style:none;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  .rules li{display:grid;grid-template-columns:26px 1fr;gap:8px;font-size:14px;line-height:1.4}
+  .btn{display:block;width:100%;padding:17px 20px;border-radius:999px;background:var(--accent);color:#1b1400;font-size:16px;font-weight:800;letter-spacing:.01em;text-align:center}
+  .btn:active{transform:scale(.98)}
+  .btn[disabled]{opacity:.6}
+  .btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--line)}
+  .small{font-size:12px;line-height:1.5;color:var(--dim);text-align:center}
+
+  #report h2{font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:center}
+  #reportTotal{font-size:64px;font-weight:800;text-align:center;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+  #reportSpecies{text-align:center;color:var(--mut);font-size:14px}
+  h3{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+  #album{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .acard{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:rgba(255,255,255,.04);display:flex;flex-direction:column}
+  .acard .ph{aspect-ratio:3/4;display:grid;place-items:center;font-size:40px;background:#0d1512;overflow:hidden}
+  .acard .ph img{width:100%;height:100%;object-fit:cover;display:block}
+  .acard.empty .ph{filter:grayscale(1);opacity:.35}
+  .acard .meta{display:flex;justify-content:space-between;gap:6px;padding:8px 10px;font-size:12px}
+  .acard .meta b{color:var(--accent);font-variant-numeric:tabular-nums}
+  #photoGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .pcard{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;background:#0d1512;border:1px solid var(--line);padding:0}
+  .pcard img{width:100%;height:100%;object-fit:cover;display:block}
+  .pcard .lbl{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font-size:11px;font-weight:700;text-align:left;
+    background:linear-gradient(transparent,rgba(0,0,0,.75));font-variant-numeric:tabular-nums}
+  .pcard .lbl.zero{color:var(--bad)}
+  .pcard .best{position:absolute;top:5px;left:5px;font-size:10px;font-weight:800;padding:2px 6px;border-radius:999px;background:var(--accent);color:#1b1400}
+  .emptyMsg{font-size:13px;color:var(--dim);text-align:center;padding:12px 0}
+
+  #lightbox{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.92);display:flex;flex-direction:column;gap:12px;
+    padding:calc(16px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));touch-action:none}
+  #lbImg{flex:1;min-height:0;width:100%;object-fit:contain}
+  #lbTitle{font-size:16px;font-weight:700;text-align:center}
+  #lbChips{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+  .lbActions{display:flex;gap:10px}
+  .lbActions > *{flex:1}
+  a.btn{text-decoration:none}
+
+  @media (orientation:landscape) and (max-height:560px){
+    .c3,.c4{bottom:calc(18px + env(safe-area-inset-bottom))}
+    .c2,.c4{right:calc(118px + env(safe-area-inset-right))}
+    #bottom{left:auto;top:0;grid-template-columns:auto;grid-template-rows:1fr auto 1fr;justify-items:center;
+      padding:calc(12px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) 0}
+    #lastThumb{justify-self:center;align-self:start;margin-top:56px}
+    #recal{justify-self:center;align-self:end}
+    #notice{bottom:calc(16px + env(safe-area-inset-bottom))}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #toast,#lastThumb,.hint,#reticle{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<video id="cam" playsinline muted autoplay></video>
+<canvas id="gl"></canvas>
+
+<div id="vf" class="hidden">
+  <div class="corner c1"></div><div class="corner c2"></div>
+  <div class="corner c3"></div><div class="corner c4"></div>
+  <div id="reticle"></div>
+</div>
+<div id="hints"></div>
+
+<div id="top" class="hidden">
+  <div class="pill">Álbum <b id="scoreVal">0</b></div>
+  <div class="pill" id="timeWrap">
+    <div>🎞 <b id="filmVal">12</b> · ⏱ <b id="timeVal">2:00</b></div>
+    <div id="timeBar"><div id="timeFill"></div></div>
+  </div>
+</div>
+<div id="mode" class="hidden"></div>
+
+<div id="bottom" class="hidden">
+  <div id="lastThumb"><img id="lastImg" alt=""></div>
+  <button id="shutter" aria-label="Sacar foto"><span></span></button>
+  <button id="recal" class="hidden" aria-label="Recalibrar vista"><span aria-hidden="true">⟲</span>Recalibrar</button>
+</div>
+<div id="gyroWarn" class="hidden" role="status"></div>
+
+<div id="flash"></div>
+<div id="toast" aria-live="polite">
+  <div id="toastPts">+0</div>
+  <div id="toastStars">☆☆☆</div>
+  <div id="toastTag"></div>
+  <div id="toastChips"></div>
+</div>
+<div id="notice"></div>
+
+<section class="screen" id="intro">
+  <div class="wrap">
+    <div class="emoji-row" aria-hidden="true"><span>🦊</span><span>🦉</span><span>🐢</span><span>🐉</span><span>🦋</span></div>
+    <h1>Forest <em>Snap</em></h1>
+    <p class="lead">Las criaturas del bosque andan sueltas a tu alrededor. Girá con el teléfono para encontrarlas a través de la cámara y sacales la mejor foto.</p>
+    <ul class="rules">
+      <li><span>🎯</span><span>Encuadrá la criatura en el centro y que ocupe buena parte de la foto.</span></li>
+      <li><span>✨</span><span>Cuando salta y brilla está en pose especial: la foto vale ×1.5.</span></li>
+      <li><span>📷</span><span>La luz y la nitidez de tu foto real también puntúan. Mantené el pulso.</span></li>
+      <li><span>🏆</span><span>Cuenta la mejor foto de cada especie. Tenés 12 fotos y 2 minutos.</span></li>
+    </ul>
+    <p class="warn hidden" id="introWarn" role="alert"></p>
+    <button class="btn" id="startBtn">Iniciar misión</button>
+    <p class="small">Te vamos a pedir permiso para usar los sensores de movimiento y la cámara. Mové el teléfono para mirar alrededor.</p>
+  </div>
+</section>
+
+<section class="screen hidden" id="report">
+  <div class="wrap">
+    <h2>Informe del recorrido</h2>
+    <div id="reportTotal">0</div>
+    <div id="reportSpecies"></div>
+    <h3>Álbum · mejor foto por especie</h3>
+    <div id="album"></div>
+    <h3>Todas las fotos</h3>
+    <div id="photoGrid"></div>
+    <button class="btn" id="againBtn">Jugar otra vez</button>
+  </div>
+</section>
+
+<div id="lightbox" class="hidden">
+  <img id="lbImg" alt="Foto ampliada">
+  <div id="lbTitle"></div>
+  <div id="lbChips"></div>
+  <div class="lbActions">
+    <a class="btn ghost" id="lbSave" download="forest-snap.jpg" href="#">Guardar</a>
+    <button class="btn ghost hidden" id="lbShare">Compartir</button>
+    <button class="btn" id="lbClose">Cerrar</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const D2R = Math.PI / 180;
+const pct = (v) => Math.round(v * 100) + '%';
+
+const CFG = {
+  SHOTS: 12,
+  DURATION: 120,
+  LONG_SIDE_FOV: 64,
+  GROUND_Y: -1.35,
+  SPECIAL_DUR: 1.4
+};
+
+const SPECIES = [
+  { id: 'zorro',    emoji: '🦊', name: 'Zorro',    size: 1.15, ground: true,  speed: 0.9 },
+  { id: 'lechuza',  emoji: '🦉', name: 'Lechuza',  size: 0.95, ground: false, speed: 0.5 },
+  { id: 'tortuga',  emoji: '🐢', name: 'Tortuga',  size: 1.0,  ground: true,  speed: 0.25 },
+  { id: 'dragon',   emoji: '🐉', name: 'Dragón',   size: 1.9,  ground: false, speed: 1.1 },
+  { id: 'mariposa', emoji: '🦋', name: 'Mariposa', size: 0.75, ground: false, speed: 1.3 }
+];
+
+/* ===================== Audio sintetizado ===================== */
+let actx = null;
+function audio() {
+  if (!actx) {
+    const C = window.AudioContext || window.webkitAudioContext;
+    if (!C) return null;
+    actx = new C();
+  }
+  if (actx.state === 'suspended') actx.resume();
+  return actx;
+}
+function tone(c, type, f0, f1, t0, dur, vol) {
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(f0, t0);
+  if (f1) o.frequency.exponentialRampToValueAtTime(f1, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol, t0 + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(g).connect(c.destination);
+  o.start(t0);
+  o.stop(t0 + dur + 0.02);
+}
+function noiseBurst(c, t0, dur, vol, hp) {
+  const n = Math.floor(c.sampleRate * dur);
+  const b = c.createBuffer(1, n, c.sampleRate);
+  const d = b.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+  const s = c.createBufferSource();
+  s.buffer = b;
+  const f = c.createBiquadFilter();
+  f.type = 'highpass';
+  f.frequency.value = hp;
+  const g = c.createGain();
+  g.gain.value = vol;
+  s.connect(f).connect(g).connect(c.destination);
+  s.start(t0);
+}
+function sfxShutter() {
+  const c = audio(); if (!c) return;
+  const t = c.currentTime;
+  tone(c, 'square', 1800, 400, t, 0.035, 0.3);
+  noiseBurst(c, t + 0.008, 0.08, 0.45, 2200);
+  tone(c, 'square', 900, 220, t + 0.095, 0.05, 0.22);
+  noiseBurst(c, t + 0.1, 0.05, 0.25, 3000);
+}
+function sfxResult(stars) {
+  const c = audio(); if (!c) return;
+  const t = c.currentTime + 0.18;
+  const seqs = [[330, 262], [523, 659], [523, 659, 784], [523, 659, 784, 1047]];
+  seqs[stars].forEach((f, i) => tone(c, stars ? 'sine' : 'triangle', f, 0, t + i * 0.08, 0.4, 0.16));
+}
+
+/* ===================== Three.js ===================== */
+const glCanvas = $('gl');
+const video = $('cam');
+const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 200);
+
+/* Escena de respaldo para cuando no hay cámara disponible */
+const env = new THREE.Group();
+scene.add(env);
+(function buildFallbackEnv() {
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(90, 24, 16),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      uniforms: { top: { value: new THREE.Color(0x5fb4ef) }, bottom: { value: new THREE.Color(0xf6ecd0) } },
+      vertexShader: 'varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
+      fragmentShader: 'uniform vec3 top; uniform vec3 bottom; varying vec3 vP; void main(){ float h = normalize(vP).y; gl_FragColor = vec4(mix(bottom, top, clamp(pow(max(h,0.0),0.6),0.0,1.0)), 1.0); }'
+    })
+  );
+  sky.renderOrder = -2;
+  env.add(sky);
+
+  const gc = document.createElement('canvas');
+  gc.width = gc.height = 128;
+  const gx = gc.getContext('2d');
+  gx.fillStyle = '#5c9a4b'; gx.fillRect(0, 0, 128, 128);
+  gx.strokeStyle = 'rgba(255,255,255,.18)'; gx.lineWidth = 2;
+  gx.strokeRect(0, 0, 128, 128);
+  const gt = new THREE.CanvasTexture(gc);
+  gt.wrapS = gt.wrapT = THREE.RepeatWrapping;
+  gt.repeat.set(60, 60);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(180, 180), new THREE.MeshBasicMaterial({ map: gt }));
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.y = CFG.GROUND_Y;
+  ground.renderOrder = -1;
+  env.add(ground);
+
+  const coneGeo = new THREE.ConeGeometry(1.8, 5, 7);
+  const trunkGeo = new THREE.CylinderGeometry(0.3, 0.4, 1.6, 6);
+  const leafMats = [0x2f7a3a, 0x3c8f45, 0x2a6b36].map(c => new THREE.MeshLambertMaterial({ color: c }));
+  const trunkMat = new THREE.MeshLambertMaterial({ color: 0x6b4a2f });
+  for (let i = 0; i < 46; i++) {
+    const a = Math.random() * Math.PI * 2, r = 16 + Math.random() * 45;
+    const t = new THREE.Group();
+    const trunk = new THREE.Mesh(trunkGeo, trunkMat); trunk.position.y = 0.8;
+    const leaf = new THREE.Mesh(coneGeo, leafMats[i % 3]); leaf.position.y = 3.6;
+    t.add(trunk, leaf);
+    t.position.set(Math.sin(a) * r, CFG.GROUND_Y, Math.cos(a) * r);
+    t.scale.setScalar(0.8 + Math.random() * 0.9);
+    env.add(t);
+  }
+  env.add(new THREE.HemisphereLight(0xfff6e0, 0x3a5a30, 1.0));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.6); sun.position.set(20, 40, 10);
+  env.add(sun);
+})();
+
+/* Texturas de emoji ajustadas al lienzo, con su caja real para puntuar */
+const texCache = new Map();
+function emojiTexture(emoji) {
+  if (texCache.has(emoji)) return texCache.get(emoji);
+  const S = 256;
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = S;
+  const ctx = cv.getContext('2d');
+  const font = (fs) => `${fs}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  let fs = 200;
+  ctx.font = font(fs);
+  let m = ctx.measureText(emoji);
+  const box = (mm, f) => ({
+    l: mm.actualBoundingBoxLeft ?? mm.width / 2,
+    r: mm.actualBoundingBoxRight ?? mm.width / 2,
+    a: mm.actualBoundingBoxAscent ?? f * 0.8,
+    d: mm.actualBoundingBoxDescent ?? f * 0.2
+  });
+  let b = box(m, fs);
+  const k = (S * 0.86) / Math.max(b.l + b.r, b.a + b.d, 1);
+  fs = Math.floor(fs * k);
+  ctx.font = font(fs);
+  m = ctx.measureText(emoji);
+  b = box(m, fs);
+  const x = S / 2 - (b.r - b.l) / 2;
+  const y = S / 2 + (b.a - b.d) / 2;
+  ctx.fillText(emoji, x, y);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.userData = {
+    box: {
+      u0: clamp((x - b.l) / S, 0, 1), u1: clamp((x + b.r) / S, 0, 1),
+      v0: clamp(1 - (y + b.d) / S, 0, 1), v1: clamp(1 - (y - b.a) / S, 0, 1)
+    }
+  };
+  texCache.set(emoji, tex);
+  return tex;
+}
+
+const glowTex = (() => {
+  const S = 128, cv = document.createElement('canvas');
+  cv.width = cv.height = S;
+  const c = cv.getContext('2d');
+  const g = c.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, 'rgba(255,240,170,.95)');
+  g.addColorStop(0.35, 'rgba(255,210,90,.45)');
+  g.addColorStop(1, 'rgba(255,200,60,0)');
+  c.fillStyle = g; c.fillRect(0, 0, S, S);
+  return new THREE.CanvasTexture(cv);
+})();
+const sparkTex = emojiTexture('✨');
+
+/* ===================== Criaturas ===================== */
+const camRight = new THREE.Vector3(), camUp = new THREE.Vector3();
+
+class Creature {
+  constructor(sp) {
+    this.sp = sp;
+    const tex = emojiTexture(sp.emoji);
+    this.box = tex.userData.box;
+    this.mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false, opacity: 0 });
+    this.sprite = new THREE.Sprite(this.mat);
+    this.sprite.center.set(0.5, sp.ground ? this.box.v0 : 0.5);
+    this.sprite.renderOrder = 2;
+    this.glowMat = new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending, opacity: 0 });
+    this.glow = new THREE.Sprite(this.glowMat);
+    this.glow.renderOrder = 1;
+    this.sparks = [];
+    for (let i = 0; i < 5; i++) {
+      const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: sparkTex, transparent: true, depthWrite: false, depthTest: false, opacity: 0 }));
+      s.renderOrder = 3;
+      this.sparks.push(s);
+      scene.add(s);
+    }
+    scene.add(this.glow, this.sprite);
+    this.alpha = 0;
+    this.specialT = 0;
+  }
+  spawn(yaw, spread, life) {
+    this.theta = yaw + (Math.random() * 2 - 1) * spread;
+    this.dist = this.sp.ground ? 3.5 + Math.random() * 4.5 : 4 + Math.random() * 6;
+    this.swing = 0.4 + Math.random() * 1.2;
+    this.baseY = this.sp.ground ? CFG.GROUND_Y : -0.3 + Math.random() * 2.2;
+    this.life = life || 16 + Math.random() * 12;
+    this.age = 0;
+    this.dir = Math.random() < 0.5 ? -1 : 1;
+    this.phase = Math.random() * 20;
+    this.timer = 1.5 + Math.random() * 4;
+    this.specialT = 0;
+  }
+  get isSpecial() { return this.specialT > 0; }
+  update(dt, t) {
+    this.age += dt;
+    if (this.age >= this.life) {
+      const near = Math.random() < 0.6;
+      this.spawn(near ? viewYaw() : Math.random() * Math.PI * 2, near ? 1.75 : Math.PI);
+    }
+    this.alpha = clamp(Math.min(this.age / 0.9, (this.life - this.age) / 0.9), 0, 1);
+
+    if (Math.random() < dt * 0.08) this.dir *= -1;
+    this.theta += this.dir * this.sp.speed * dt / this.dist;
+    const d = this.dist + Math.sin(t * 0.35 + this.phase) * this.swing;
+
+    let jump = 0, scaleK = 1, rot = 0, glowA = 0, shake = 0;
+    if (this.specialT > 0) {
+      this.specialT -= dt;
+      const p = 1 - Math.max(0, this.specialT) / CFG.SPECIAL_DUR;
+      const s = Math.sin(Math.PI * p);
+      jump = s * (this.sp.ground ? 0.9 : 0.6) * this.sp.size;
+      scaleK = 1 + 0.3 * s;
+      rot = Math.sin(p * Math.PI * 4) * 0.25 * s;
+      glowA = s;
+      if (this.specialT <= 0) { this.specialT = 0; this.timer = 3.5 + Math.random() * 4.5; }
+    } else {
+      this.timer -= dt;
+      if (this.timer <= 0) this.specialT = CFG.SPECIAL_DUR;
+      else if (this.timer < 0.6) shake = Math.sin(t * 45) * 0.05 * this.sp.size;
+    }
+
+    const bob = this.sp.ground ? Math.abs(Math.sin(t * 3 + this.phase)) * 0.06 : Math.sin(t * 1.8 + this.phase) * 0.25;
+    const x = -Math.sin(this.theta) * d + camRight.x * shake;
+    const z = -Math.cos(this.theta) * d + camRight.z * shake;
+    const y = this.baseY + bob + jump;
+    const sc = this.sp.size * scaleK;
+    this.sprite.position.set(x, y, z);
+    this.sprite.scale.set(sc, sc, 1);
+    this.mat.rotation = rot;
+    this.mat.opacity = this.alpha;
+
+    const cy = ((this.box.v0 + this.box.v1) / 2 - this.sprite.center.y) * sc;
+    const gx = x + camUp.x * cy, gy = y + camUp.y * cy, gz = z + camUp.z * cy;
+    this.glow.position.set(gx, gy, gz);
+    this.glow.scale.setScalar(sc * 1.9);
+    this.glowMat.opacity = glowA * 0.85 * this.alpha;
+    const r = sc * 0.68;
+    this.sparks.forEach((s, i) => {
+      const a = t * 3 + (i * Math.PI * 2) / 5;
+      const ox = Math.cos(a) * r, oy = Math.sin(a) * r * 0.85;
+      s.position.set(gx + camRight.x * ox + camUp.x * oy, gy + camRight.y * ox + camUp.y * oy, gz + camRight.z * ox + camUp.z * oy);
+      s.scale.setScalar(sc * 0.26 * (0.7 + 0.3 * Math.sin(t * 9 + i)));
+      s.material.opacity = glowA * this.alpha;
+    });
+  }
+}
+
+let creatures = [];
+function spawnCreatures() {
+  creatures.forEach(c => {
+    scene.remove(c.sprite, c.glow);
+    c.sparks.forEach(s => scene.remove(s));
+  });
+  const list = SPECIES.slice();
+  list.push(SPECIES[Math.floor(Math.random() * SPECIES.length)]);
+  list.push(SPECIES[Math.floor(Math.random() * SPECIES.length)]);
+  const yaw = viewYaw();
+  creatures = list.map((sp, i) => {
+    const c = new Creature(sp);
+    const spread = i < 3 ? 0.7 : Math.PI;
+    c.spawn(yaw, spread, 10 + Math.random() * 18);
+    return c;
+  });
+  buildHints();
+}
+
+/* ===================== Orientación: giroscopio o arrastre ===================== */
+const orient = { got: false, alpha: 0, beta: 90, gamma: 0 };
+const targetQ = new THREE.Quaternion();
+const _euler = new THREE.Euler();
+const _qDevice = new THREE.Quaternion();
+const _qScreen = new THREE.Quaternion();
+const _qRaw = new THREE.Quaternion();
+const Q_WORLD = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+const _zee = new THREE.Vector3(0, 0, 1);
+const _yAxis = new THREE.Vector3(0, 1, 0);
+const _fwd = new THREE.Vector3();
+const calibQ = new THREE.Quaternion();
+
+function onDeviceOrientation(e) {
+  if (e.beta == null && e.gamma == null) return;
+  orient.got = true;
+  orient.alpha = e.alpha || 0;
+  orient.beta = e.beta || 0;
+  orient.gamma = e.gamma || 0;
+}
+function screenAngle() {
+  if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
+  return typeof window.orientation === 'number' ? window.orientation : 0;
+}
+/* W3C: R = Rz(α)·Rx(β)·Ry(γ) en el marco terrestre (Z arriba); Q_WORLD lo pasa al marco de Three.js (Y arriba) */
+function gyroQuaternion(out, calibrated = true) {
+  _euler.set(orient.beta * D2R, orient.gamma * D2R, orient.alpha * D2R, 'ZXY');
+  _qDevice.setFromEuler(_euler);
+  _qScreen.setFromAxisAngle(_zee, -screenAngle() * D2R);
+  out.copy(Q_WORLD).multiply(_qDevice).multiply(_qScreen);
+  if (calibrated) out.premultiply(calibQ);
+  return out;
+}
+function yawOf(q) {
+  _fwd.set(0, 0, -1).applyQuaternion(q);
+  return Math.atan2(-_fwd.x, -_fwd.z);
+}
+function viewYaw() {
+  return yawOf(camera.quaternion);
+}
+function recalibrate() {
+  if (!state.gyro) return;
+  calibQ.setFromAxisAngle(_yAxis, -yawOf(gyroQuaternion(_qRaw, false)));
+  gyroQuaternion(camera.quaternion);
+  prevQ.copy(camera.quaternion);
+}
+function waitForGyro(ms) {
+  return new Promise(resolve => {
+    if (orient.got) return resolve(true);
+    const t0 = performance.now();
+    const tick = () => {
+      if (orient.got) return resolve(true);
+      if (performance.now() - t0 > ms) return resolve(false);
+      setTimeout(tick, 60);
+    };
+    tick();
+  });
+}
+
+addEventListener('keydown', (e) => {
+  if (e.code === 'Space') { e.preventDefault(); takeShot(); }
+});
+
+/* ===================== Cámara del teléfono ===================== */
+async function startCamera() {
+  if (video.srcObject && video.srcObject.active) return { ok: true };
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    return { ok: false, reason: window.isSecureContext ? 'Este navegador no permite usar la cámara.' : 'La cámara necesita una dirección HTTPS.' };
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    video.srcObject = stream;
+    await video.play();
+    if (!video.videoWidth) await new Promise(r => video.addEventListener('loadedmetadata', r, { once: true }));
+    return { ok: true };
+  } catch (err) {
+    const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
+    return { ok: false, reason: denied ? 'No diste permiso para usar la cámara.' : 'No se encontró una cámara disponible.' };
+  }
+}
+
+function updateProjection() {
+  const W = innerWidth, H = innerHeight;
+  renderer.setSize(W, H, false);
+  camera.aspect = W / H;
+  if (state.camOn && video.videoWidth) {
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const s = Math.max(W / vw, H / vh);
+    const shownH = H / s;
+    const f = (Math.max(vw, vh) / 2) / Math.tan((CFG.LONG_SIDE_FOV / 2) * D2R);
+    camera.fov = 2 * Math.atan((shownH / 2) / f) / D2R;
+  } else {
+    camera.fov = W < H ? 64 : 44;
+  }
+  camera.updateProjectionMatrix();
+}
+addEventListener('resize', updateProjection);
+addEventListener('orientationchange', () => setTimeout(updateProjection, 250));
+video.addEventListener('resize', updateProjection);
+
+/* ===================== Indicadores y retícula ===================== */
+const hintsRoot = $('hints');
+let hintEls = [];
+function buildHints() {
+  hintsRoot.textContent = '';
+  hintEls = creatures.map(c => {
+    const el = document.createElement('div');
+    el.className = 'hint';
+    const a = document.createElement('i');
+    a.className = 'hint-arrow';
+    const s = document.createElement('span');
+    s.textContent = c.sp.emoji;
+    el.append(a, s);
+    hintsRoot.appendChild(el);
+    return { el, a, shown: false };
+  });
+}
+
+const _v = new THREE.Vector3(), _p0 = new THREE.Vector3(), _p1 = new THREE.Vector3();
+
+function measure(c) {
+  const s = c.sprite, sc = s.scale.x, b = c.box;
+  _v.copy(s.position).applyMatrix4(camera.matrixWorldInverse);
+  if (_v.z > -0.3) return null;
+  _p0.set(_v.x + (b.u0 - s.center.x) * sc, _v.y + (b.v0 - s.center.y) * sc, _v.z).applyMatrix4(camera.projectionMatrix);
+  _p1.set(_v.x + (b.u1 - s.center.x) * sc, _v.y + (b.v1 - s.center.y) * sc, _v.z).applyMatrix4(camera.projectionMatrix);
+  const x0 = Math.min(_p0.x, _p1.x), x1 = Math.max(_p0.x, _p1.x);
+  const y0 = Math.min(_p0.y, _p1.y), y1 = Math.max(_p0.y, _p1.y);
+  const area = (x1 - x0) * (y1 - y0);
+  if (area <= 0) return null;
+  const ix = Math.max(0, Math.min(1, x1) - Math.max(-1, x0));
+  const iy = Math.max(0, Math.min(1, y1) - Math.max(-1, y0));
+  return { inside: (ix * iy) / area, size: Math.sqrt(area / 4), cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 };
+}
+
+function updateHints() {
+  const W = innerWidth, H = innerHeight, cx = W / 2, cy = H / 2;
+  const rx = W / 2 - 34, ryTop = H / 2 - 110, ryBot = H / 2 - 150;
+  creatures.forEach((c, i) => {
+    const h = hintEls[i];
+    let show = false;
+    if (c.alpha > 0.5) {
+      _v.copy(c.sprite.position).applyMatrix4(camera.matrixWorldInverse);
+      _p0.copy(_v).applyMatrix4(camera.projectionMatrix);
+      const onScreen = _v.z < 0 && Math.abs(_p0.x) < 1 && Math.abs(_p0.y) < 1;
+      if (!onScreen) {
+        let dx = _v.x, dy = _v.y;
+        if (Math.hypot(dx, dy) < 1e-3) dx = 1;
+        const ang = Math.atan2(dy, dx), co = Math.cos(ang), si = Math.sin(ang);
+        const ry = si > 0 ? ryTop : ryBot;
+        const t = Math.min(Math.abs(co) > 1e-4 ? rx / Math.abs(co) : 1e9, Math.abs(si) > 1e-4 ? ry / Math.abs(si) : 1e9);
+        h.el.style.transform = `translate3d(${(cx + co * t - 22).toFixed(1)}px,${(cy - si * t - 22).toFixed(1)}px,0)`;
+        h.a.style.transform = `rotate(${(-ang).toFixed(3)}rad)`;
+        show = true;
+      }
+    }
+    if (show !== h.shown) { h.el.classList.toggle('on', show); h.shown = show; }
+  });
+}
+
+const reticle = $('reticle');
+let reticleState = '';
+function updateReticle() {
+  let next = '';
+  for (const c of creatures) {
+    if (c.alpha < 0.6) continue;
+    const m = measure(c);
+    if (m && m.inside >= 0.6 && m.size >= 0.05 && Math.hypot(m.cx, m.cy) < 0.3) {
+      next = c.isSpecial ? 'lock special' : (next || 'lock');
+      if (c.isSpecial) break;
+    }
+  }
+  if (next !== reticleState) { reticle.className = next; reticleState = next; }
+}
+
+/* ===================== Puntuación ===================== */
+function evaluateSubjects() {
+  const seen = [];
+  let partial = false, far = false;
+  for (const c of creatures) {
+    if (c.alpha < 0.6) continue;
+    const m = measure(c);
+    if (!m || m.inside <= 0) continue;
+    if (m.inside < 0.6) { partial = true; continue; }
+    if (m.size < 0.05) { far = true; continue; }
+    const size = m.size < 0.2 ? (m.size - 0.05) / 0.15 : m.size <= 0.5 ? 1 : Math.max(0.55, 1 - (m.size - 0.5) * 0.9);
+    const center = clamp(1 - Math.hypot(m.cx, m.cy) / 0.95, 0, 1);
+    const whole = clamp((m.inside - 0.6) / 0.4, 0, 1);
+    const base = 100 * (0.45 * size + 0.40 * center + 0.15 * whole);
+    seen.push({ c, size, center, pose: c.isSpecial, value: base * (c.isSpecial ? 1.5 : 1) });
+  }
+  seen.sort((a, b) => b.value - a.value);
+  return { seen, partial, far };
+}
+
+const shotCanvas = document.createElement('canvas');
+const shotCtx = shotCanvas.getContext('2d');
+const anaCanvas = document.createElement('canvas');
+const anaCtx = anaCanvas.getContext('2d', { willReadFrequently: true });
+
+function analyzeFrame(src) {
+  const w = 128, h = Math.max(8, Math.round(128 * src.height / src.width));
+  anaCanvas.width = w; anaCanvas.height = h;
+  anaCtx.drawImage(src, 0, 0, w, h);
+  const d = anaCtx.getImageData(0, 0, w, h).data;
+  const g = new Float32Array(w * h);
+  let sum = 0;
+  for (let i = 0, j = 0; i < g.length; i++, j += 4) {
+    const l = 0.2126 * d[j] + 0.7152 * d[j + 1] + 0.0722 * d[j + 2];
+    g[i] = l; sum += l;
+  }
+  let ls = 0, lq = 0, n = 0;
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x;
+      const lap = g[i - 1] + g[i + 1] + g[i - w] + g[i + w] - 4 * g[i];
+      ls += lap; lq += lap * lap; n++;
+    }
+  }
+  const lm = ls / n;
+  return { mean: sum / g.length / 255, lapVar: lq / n - lm * lm };
+}
+
+function capturePhoto() {
+  const W = innerWidth, H = innerHeight;
+  const k = Math.min(1280 / Math.max(W, H), Math.max(1, Math.min(2, window.devicePixelRatio || 1)));
+  const cw = Math.round(W * k), ch = Math.round(H * k);
+  shotCanvas.width = cw; shotCanvas.height = ch;
+  let frame = null;
+  if (state.camOn && video.videoWidth) {
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const s = Math.max(W / vw, H / vh), sw = W / s, sh = H / s;
+    shotCtx.drawImage(video, (vw - sw) / 2, (vh - sh) / 2, sw, sh, 0, 0, cw, ch);
+    frame = analyzeFrame(shotCanvas);
+  } else {
+    shotCtx.fillStyle = '#000';
+    shotCtx.fillRect(0, 0, cw, ch);
+  }
+  shotCtx.drawImage(glCanvas, 0, 0, cw, ch);
+  return { url: shotCanvas.toDataURL('image/jpeg', 0.86), frame };
+}
+
+function photoQuality(frame, omega) {
+  let factor = 1;
+  const q = { light: null, sharp: null, steady: 1 };
+  if (frame) {
+    const L = frame.mean;
+    q.light = L < 0.16 ? 0.55 + 0.45 * (L / 0.16) : L > 0.86 ? 0.55 + 0.45 * ((1 - L) / 0.14) : 1;
+    q.sharp = clamp((frame.lapVar - 25) / 200, 0, 1);
+    factor *= q.light * (0.65 + 0.35 * q.sharp);
+  }
+  q.steady = omega < 0.6 ? 1 : Math.max(0.7, 1 - (omega - 0.6) * 0.12);
+  factor *= q.steady;
+  return { factor, q };
+}
+
+/* ===================== Estado del juego ===================== */
+const state = {
+  phase: 'intro',
+  shots: CFG.SHOTS,
+  time: CFG.DURATION,
+  photos: [],
+  best: {},
+  camOn: false,
+  gyro: false
+};
+let omega = 0;
+let shotLock = false;
+let shownSecond = -1;
+
+function albumTotal() {
+  return Object.values(state.best).reduce((s, p) => s + p.points, 0);
+}
+
+function takeShot() {
+  if (state.phase !== 'play' || state.shots <= 0 || shotLock) return;
+  shotLock = true;
+  setTimeout(() => { shotLock = false; }, 380);
+
+  camera.updateMatrixWorld();
+  renderer.render(scene, camera);
+  const { seen, partial, far } = evaluateSubjects();
+  const shot = capturePhoto();
+  const { factor, q } = photoQuality(shot.frame, omega);
+
+  const photo = { url: shot.url, points: 0, stars: 0, species: null, chips: [], reason: '' };
+  if (!seen.length) {
+    photo.reason = partial ? 'Criatura cortada en el borde' : far ? 'Demasiado lejos' : 'Sin criaturas en el cuadro';
+  } else {
+    const main = seen[0];
+    const extras = Math.min(2, seen.length - 1);
+    photo.points = Math.max(1, Math.round((main.value + extras * 12) * factor));
+    photo.stars = photo.points >= 100 ? 3 : photo.points >= 60 ? 2 : 1;
+    photo.species = main.c.sp;
+    photo.chips.push('🎯 Encuadre ' + pct(main.center), '📏 Tamaño ' + pct(main.size));
+    if (main.pose) photo.chips.push('✨ Pose ×1.5');
+    if (extras) photo.chips.push('👥 +' + extras + ' extra');
+  }
+  if (q.light != null) photo.chips.push('💡 Luz ' + pct(q.light), '🔍 Nitidez ' + pct(q.sharp));
+  if (q.steady < 1) photo.chips.push('🤚 Pulso ' + pct(q.steady));
+
+  let record = false;
+  if (photo.species) {
+    const prev = state.best[photo.species.id];
+    if (!prev || photo.points > prev.points) { state.best[photo.species.id] = photo; record = true; }
+  }
+  state.photos.push(photo);
+  state.shots--;
+
+  sfxShutter();
+  sfxResult(photo.stars);
+  if (navigator.vibrate) navigator.vibrate(18);
+  flash();
+  showToast(photo, record);
+  $('lastImg').src = photo.url;
+  $('lastThumb').classList.add('on');
+  $('scoreVal').textContent = albumTotal();
+  $('filmVal').textContent = state.shots;
+  $('shutter').classList.toggle('empty', state.shots <= 0);
+
+  if (state.shots <= 0) setTimeout(endGame, 1500);
+}
+
+function flash() {
+  const f = $('flash');
+  f.style.transition = 'none';
+  f.style.opacity = '0.85';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    f.style.transition = 'opacity .4s ease';
+    f.style.opacity = '0';
+  }));
+}
+
+let toastTimer = 0;
+function showToast(p, record) {
+  $('toastPts').textContent = '+' + p.points;
+  $('toastStars').textContent = '★'.repeat(p.stars) + '☆'.repeat(3 - p.stars);
+  const tag = $('toastTag');
+  if (!p.species) {
+    tag.textContent = p.reason;
+    tag.classList.add('bad');
+  } else {
+    const label = p.stars === 3 ? '¡Foto perfecta!' : p.stars === 2 ? '¡Muy buena!' : 'Foto aceptable';
+    tag.textContent = record ? label + ' · nuevo récord ' + p.species.name : label + ' · ' + p.species.name;
+    tag.classList.remove('bad');
+  }
+  const chips = $('toastChips');
+  chips.textContent = '';
+  p.chips.forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'chip';
+    s.textContent = t;
+    chips.appendChild(s);
+  });
+  const el = $('toast');
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 1900);
+}
+
+let noticeTimer = 0;
+function notice(text, ms) {
+  const n = $('notice');
+  n.textContent = text;
+  n.classList.add('on');
+  clearTimeout(noticeTimer);
+  noticeTimer = setTimeout(() => n.classList.remove('on'), ms || 4000);
+}
+
+function setPlayingUI(on) {
+  ['vf', 'top', 'bottom', 'mode'].forEach(id => $(id).classList.toggle('hidden', !on));
+  hintsRoot.classList.toggle('hidden', !on);
+  $('gyroWarn').classList.toggle('hidden', !on || state.gyro);
+  $('recal').classList.toggle('hidden', !state.gyro);
+}
+
+function updateModeBadge() {
+  const m = $('mode');
+  m.textContent = (state.camOn ? '📷 Cámara' : '🌄 Escena simulada') + ' · ' + (state.gyro ? '🧭 Giroscopio activo' : '⚠️ Sin giroscopio');
+  m.classList.remove('faded');
+  setTimeout(() => m.classList.add('faded'), 4000);
+}
+
+const HTTPS_WARNING = 'Accede mediante HTTPS para habilitar el giroscopio';
+function sensorProblem(motion) {
+  if (!window.isSecureContext || motion === 'insecure') return HTTPS_WARNING;
+  if (motion === 'denied') return 'Permiso de movimiento denegado. Recargá la página y tocá «Permitir».';
+  return HTTPS_WARNING + ' (este dispositivo o navegador no envía datos de orientación).';
+}
+
+function startRound() {
+  state.phase = 'play';
+  state.shots = CFG.SHOTS;
+  state.time = CFG.DURATION;
+  state.photos = [];
+  state.best = {};
+  shownSecond = -1;
+  if (state.gyro) recalibrate();
+  else camera.quaternion.identity();
+  camera.updateMatrixWorld();
+  spawnCreatures();
+  $('scoreVal').textContent = '0';
+  $('filmVal').textContent = state.shots;
+  $('shutter').classList.remove('empty');
+  $('lastThumb').classList.remove('on');
+  $('intro').classList.add('hidden');
+  $('report').classList.add('hidden');
+  setPlayingUI(true);
+  updateModeBadge();
+}
+
+async function requestMotion() {
+  if (!window.isSecureContext) return 'insecure';
+  if (typeof DeviceOrientationEvent === 'undefined') return 'unsupported';
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      return await DeviceOrientationEvent.requestPermission();
+    } catch (err) {
+      return 'denied';
+    }
+  }
+  return 'granted';
+}
+
+$('startBtn').addEventListener('click', async () => {
+  const btn = $('startBtn');
+  if (btn.disabled) return;
+  audio();
+  btn.disabled = true;
+  btn.textContent = 'Pidiendo permisos…';
+  const motion = await requestMotion();
+  if (motion === 'granted') addEventListener('deviceorientation', onDeviceOrientation);
+  const cam = await startCamera();
+  state.gyro = motion === 'granted' ? await waitForGyro(1500) : false;
+  state.camOn = cam.ok;
+  env.visible = !cam.ok;
+  video.classList.toggle('hidden', !cam.ok);
+  updateProjection();
+  $('gyroWarn').textContent = state.gyro ? '' : sensorProblem(motion);
+  btn.disabled = false;
+  btn.textContent = 'Iniciar misión';
+  startRound();
+  if (!cam.ok) notice(cam.reason + ' Usamos una escena simulada.', 5500);
+});
+
+$('recal').addEventListener('click', () => {
+  recalibrate();
+  notice('Vista recalibrada: hacia donde apuntás ahora es el frente.', 2500);
+});
+
+$('shutter').addEventListener('click', takeShot);
+$('againBtn').addEventListener('click', () => { audio(); startRound(); });
+
+function endGame() {
+  if (state.phase !== 'play') return;
+  state.phase = 'report';
+  setPlayingUI(false);
+  $('toast').classList.remove('on');
+  buildReport();
+  $('report').classList.remove('hidden');
+  $('report').scrollTop = 0;
+}
+
+function buildReport() {
+  $('reportTotal').textContent = albumTotal();
+  const found = Object.keys(state.best).length;
+  $('reportSpecies').textContent = found + ' de ' + SPECIES.length + ' especies fotografiadas · ' + state.photos.length + ' fotos';
+
+  const album = $('album');
+  album.textContent = '';
+  SPECIES.forEach(sp => {
+    const best = state.best[sp.id];
+    const card = document.createElement(best ? 'button' : 'div');
+    card.className = 'acard' + (best ? '' : ' empty');
+    const ph = document.createElement('div');
+    ph.className = 'ph';
+    if (best) {
+      const img = document.createElement('img');
+      img.src = best.url;
+      img.alt = 'Mejor foto de ' + sp.name;
+      ph.appendChild(img);
+      card.addEventListener('click', () => openLightbox(best));
+    } else {
+      ph.textContent = sp.emoji;
+    }
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const nm = document.createElement('span');
+    nm.textContent = sp.emoji + ' ' + sp.name;
+    const pts = document.createElement('b');
+    pts.textContent = best ? best.points + ' · ' + '★'.repeat(best.stars) : '—';
+    meta.append(nm, pts);
+    card.append(ph, meta);
+    album.appendChild(card);
+  });
+
+  const grid = $('photoGrid');
+  grid.textContent = '';
+  if (!state.photos.length) {
+    const p = document.createElement('p');
+    p.className = 'emptyMsg';
+    p.textContent = 'No sacaste fotos en este recorrido.';
+    grid.appendChild(p);
+    return;
+  }
+  state.photos.slice().sort((a, b) => b.points - a.points).forEach(p => {
+    const card = document.createElement('button');
+    card.className = 'pcard';
+    const img = document.createElement('img');
+    img.src = p.url;
+    img.alt = p.species ? 'Foto de ' + p.species.name : 'Foto sin criatura';
+    const lbl = document.createElement('div');
+    lbl.className = 'lbl' + (p.points ? '' : ' zero');
+    lbl.textContent = p.points ? p.species.emoji + ' ' + p.points + ' pts' : '0 pts';
+    card.append(img, lbl);
+    if (p.species && state.best[p.species.id] === p) {
+      const b = document.createElement('span');
+      b.className = 'best';
+      b.textContent = 'MEJOR';
+      card.appendChild(b);
+    }
+    card.addEventListener('click', () => openLightbox(p));
+    grid.appendChild(card);
+  });
+}
+
+function openLightbox(p) {
+  $('lbImg').src = p.url;
+  $('lbTitle').textContent = p.species
+    ? p.species.emoji + ' ' + p.species.name + ' · ' + p.points + ' pts · ' + '★'.repeat(p.stars) + '☆'.repeat(3 - p.stars)
+    : '0 pts · ' + p.reason;
+  const chips = $('lbChips');
+  chips.textContent = '';
+  p.chips.forEach(t => {
+    const s = document.createElement('span');
+    s.className = 'chip';
+    s.textContent = t;
+    chips.appendChild(s);
+  });
+  const save = $('lbSave');
+  save.href = p.url;
+  save.download = 'forest-snap-' + (p.species ? p.species.id : 'foto') + '-' + p.points + '.jpg';
+  const share = $('lbShare');
+  share.classList.toggle('hidden', !navigator.canShare);
+  share.onclick = () => sharePhoto(p);
+  $('lightbox').classList.remove('hidden');
+}
+$('lbClose').addEventListener('click', () => $('lightbox').classList.add('hidden'));
+
+async function sharePhoto(p) {
+  try {
+    const blob = await (await fetch(p.url)).blob();
+    const file = new File([blob], 'forest-snap.jpg', { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Forest Snap' });
+    } else {
+      notice('Este navegador no permite compartir imágenes. Usá Guardar.');
+    }
+  } catch (err) {
+    if (err && err.name !== 'AbortError') notice('No se pudo compartir la foto.');
+  }
+}
+
+if (!window.isSecureContext || typeof DeviceOrientationEvent === 'undefined') {
+  const w = $('introWarn');
+  w.textContent = HTTPS_WARNING;
+  w.classList.remove('hidden');
+}
+
+/* ===================== Bucle principal ===================== */
+const prevQ = new THREE.Quaternion();
+let last = performance.now();
+let elapsed = 0;
+
+function loop(now) {
+  requestAnimationFrame(loop);
+  const dt = clamp((now - last) / 1000, 0.001, 0.05);
+  last = now;
+  if (state.phase !== 'play') return;
+
+  if (state.gyro) {
+    gyroQuaternion(targetQ);
+    camera.quaternion.slerp(targetQ, 1 - Math.pow(0.45, dt * 60));
+  }
+  omega = omega * 0.7 + (camera.quaternion.angleTo(prevQ) / dt) * 0.3;
+  prevQ.copy(camera.quaternion);
+  camera.updateMatrixWorld();
+  camRight.setFromMatrixColumn(camera.matrixWorld, 0);
+  camUp.setFromMatrixColumn(camera.matrixWorld, 1);
+
+  if (!document.hidden) state.time -= dt;
+  elapsed += dt;
+  creatures.forEach(c => c.update(dt, elapsed));
+
+  const remain = Math.max(0, state.time);
+  const sec = Math.ceil(remain);
+  if (sec !== shownSecond) {
+    shownSecond = sec;
+    $('timeVal').textContent = Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0');
+    $('timeFill').classList.toggle('low', sec <= 15);
+  }
+  $('timeFill').style.transform = 'scaleX(' + (remain / CFG.DURATION).toFixed(4) + ')';
+
+  updateHints();
+  updateReticle();
+  renderer.render(scene, camera);
+
+  if (state.time <= 0) endGame();
+}
+
+updateProjection();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
