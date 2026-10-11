@@ -85,7 +85,15 @@
   #shutter span{width:62px;height:62px;border-radius:50%;background:#fff;transition:transform .09s ease,background .2s ease}
   #shutter:active span{transform:scale(.84)}
   #shutter.empty span{background:#5a5a5a}
-  #filmLeft{justify-self:end;font-size:12px;color:var(--mut);text-align:right;line-height:1.3;font-variant-numeric:tabular-nums}
+  #recal{justify-self:end;pointer-events:auto;display:flex;flex-direction:column;align-items:center;gap:2px;
+    font-size:11px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:7px 10px}
+  #recal span{font-size:20px;line-height:1}
+  #recal:active{transform:scale(.94)}
+  #gyroWarn{position:fixed;left:50%;top:calc(92px + env(safe-area-inset-top));transform:translateX(-50%);z-index:11;
+    width:max-content;max-width:calc(100% - 32px);font-size:13px;font-weight:600;line-height:1.4;text-align:center;
+    padding:9px 14px;border-radius:12px;background:rgba(60,14,10,.82);border:1px solid var(--bad);color:#FFD9D4;pointer-events:none}
+  .warn{font-size:14px;font-weight:600;line-height:1.45;text-align:center;padding:12px 14px;border-radius:14px;
+    background:rgba(255,107,94,.12);border:1px solid var(--bad);color:#FFD9D4}
 
   #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:20}
 
@@ -124,7 +132,6 @@
   .btn[disabled]{opacity:.6}
   .btn.ghost{background:rgba(255,255,255,.08);color:var(--ink);border:1px solid var(--line)}
   .small{font-size:12px;line-height:1.5;color:var(--dim);text-align:center}
-  #introMsg{color:var(--accent)}
 
   #report h2{font-size:15px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:center}
   #reportTotal{font-size:64px;font-weight:800;text-align:center;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
@@ -161,7 +168,7 @@
     #bottom{left:auto;top:0;grid-template-columns:auto;grid-template-rows:1fr auto 1fr;justify-items:center;
       padding:calc(12px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) 0}
     #lastThumb{justify-self:center;align-self:start;margin-top:56px}
-    #filmLeft{justify-self:center;align-self:end;text-align:center}
+    #recal{justify-self:center;align-self:end}
     #notice{bottom:calc(16px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){
@@ -193,8 +200,9 @@
 <div id="bottom" class="hidden">
   <div id="lastThumb"><img id="lastImg" alt=""></div>
   <button id="shutter" aria-label="Sacar foto"><span></span></button>
-  <div id="filmLeft"></div>
+  <button id="recal" class="hidden" aria-label="Recalibrar vista"><span aria-hidden="true">⟲</span>Recalibrar</button>
 </div>
+<div id="gyroWarn" class="hidden" role="status"></div>
 
 <div id="flash"></div>
 <div id="toast" aria-live="polite">
@@ -216,8 +224,9 @@
       <li><span>📷</span><span>La luz y la nitidez de tu foto real también puntúan. Mantené el pulso.</span></li>
       <li><span>🏆</span><span>Cuenta la mejor foto de cada especie. Tenés 12 fotos y 2 minutos.</span></li>
     </ul>
-    <button class="btn" id="startBtn">Abrir cámara y jugar</button>
-    <p class="small" id="introMsg">Te vamos a pedir permiso para usar la cámara y los sensores de movimiento.</p>
+    <p class="warn hidden" id="introWarn" role="alert"></p>
+    <button class="btn" id="startBtn">Iniciar misión</button>
+    <p class="small">Te vamos a pedir permiso para usar los sensores de movimiento y la cámara. Mové el teléfono para mirar alrededor.</p>
   </div>
 </section>
 
@@ -550,13 +559,16 @@ function spawnCreatures() {
 
 /* ===================== Orientación: giroscopio o arrastre ===================== */
 const orient = { got: false, alpha: 0, beta: 90, gamma: 0 };
-const look = { yaw: 0, pitch: 0 };
 const targetQ = new THREE.Quaternion();
 const _euler = new THREE.Euler();
-const _q0 = new THREE.Quaternion();
-const _q1 = new THREE.Quaternion(-Math.SQRT1_2, 0, 0, Math.SQRT1_2);
+const _qDevice = new THREE.Quaternion();
+const _qScreen = new THREE.Quaternion();
+const _qRaw = new THREE.Quaternion();
+const Q_WORLD = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
 const _zee = new THREE.Vector3(0, 0, 1);
+const _yAxis = new THREE.Vector3(0, 1, 0);
 const _fwd = new THREE.Vector3();
+const calibQ = new THREE.Quaternion();
 
 function onDeviceOrientation(e) {
   if (e.beta == null && e.gamma == null) return;
@@ -569,16 +581,27 @@ function screenAngle() {
   if (screen.orientation && typeof screen.orientation.angle === 'number') return screen.orientation.angle;
   return typeof window.orientation === 'number' ? window.orientation : 0;
 }
-function gyroQuaternion(out) {
-  _euler.set(orient.beta * D2R, orient.alpha * D2R, -orient.gamma * D2R, 'YXZ');
-  out.setFromEuler(_euler);
-  out.multiply(_q1);
-  out.multiply(_q0.setFromAxisAngle(_zee, -screenAngle() * D2R));
+/* W3C: R = Rz(α)·Rx(β)·Ry(γ) en el marco terrestre (Z arriba); Q_WORLD lo pasa al marco de Three.js (Y arriba) */
+function gyroQuaternion(out, calibrated = true) {
+  _euler.set(orient.beta * D2R, orient.gamma * D2R, orient.alpha * D2R, 'ZXY');
+  _qDevice.setFromEuler(_euler);
+  _qScreen.setFromAxisAngle(_zee, -screenAngle() * D2R);
+  out.copy(Q_WORLD).multiply(_qDevice).multiply(_qScreen);
+  if (calibrated) out.premultiply(calibQ);
   return out;
 }
-function viewYaw() {
-  _fwd.set(0, 0, -1).applyQuaternion(camera.quaternion);
+function yawOf(q) {
+  _fwd.set(0, 0, -1).applyQuaternion(q);
   return Math.atan2(-_fwd.x, -_fwd.z);
+}
+function viewYaw() {
+  return yawOf(camera.quaternion);
+}
+function recalibrate() {
+  if (!state.gyro) return;
+  calibQ.setFromAxisAngle(_yAxis, -yawOf(gyroQuaternion(_qRaw, false)));
+  gyroQuaternion(camera.quaternion);
+  prevQ.copy(camera.quaternion);
 }
 function waitForGyro(ms) {
   return new Promise(resolve => {
@@ -593,28 +616,9 @@ function waitForGyro(ms) {
   });
 }
 
-let drag = null;
-glCanvas.addEventListener('pointerdown', (e) => {
-  if (state.gyro || state.phase !== 'play') return;
-  drag = { x: e.clientX, y: e.clientY, yaw: look.yaw, pitch: look.pitch, id: e.pointerId };
-  glCanvas.setPointerCapture(e.pointerId);
-});
-glCanvas.addEventListener('pointermove', (e) => {
-  if (!drag || e.pointerId !== drag.id) return;
-  const k = (camera.fov * D2R) / innerHeight;
-  look.yaw = drag.yaw + (e.clientX - drag.x) * k;
-  look.pitch = clamp(drag.pitch + (e.clientY - drag.y) * k, -1.2, 1.2);
-});
-const endDrag = (e) => { if (drag && e.pointerId === drag.id) drag = null; };
-glCanvas.addEventListener('pointerup', endDrag);
-glCanvas.addEventListener('pointercancel', endDrag);
-
-const keys = new Set();
 addEventListener('keydown', (e) => {
-  if (e.code === 'Space') { e.preventDefault(); takeShot(); return; }
-  if (e.code.startsWith('Arrow')) { e.preventDefault(); keys.add(e.code); }
+  if (e.code === 'Space') { e.preventDefault(); takeShot(); }
 });
-addEventListener('keyup', (e) => keys.delete(e.code));
 
 /* ===================== Cámara del teléfono ===================== */
 async function startCamera() {
@@ -874,7 +878,6 @@ function takeShot() {
   $('lastThumb').classList.add('on');
   $('scoreVal').textContent = albumTotal();
   $('filmVal').textContent = state.shots;
-  $('filmLeft').textContent = state.shots === 1 ? 'última foto' : state.shots + ' fotos';
   $('shutter').classList.toggle('empty', state.shots <= 0);
 
   if (state.shots <= 0) setTimeout(endGame, 1500);
@@ -929,13 +932,22 @@ function notice(text, ms) {
 function setPlayingUI(on) {
   ['vf', 'top', 'bottom', 'mode'].forEach(id => $(id).classList.toggle('hidden', !on));
   hintsRoot.classList.toggle('hidden', !on);
+  $('gyroWarn').classList.toggle('hidden', !on || state.gyro);
+  $('recal').classList.toggle('hidden', !state.gyro);
 }
 
 function updateModeBadge() {
   const m = $('mode');
-  m.textContent = (state.camOn ? '📷 Cámara' : '🌄 Escena simulada') + ' · ' + (state.gyro ? '🧭 Movés el teléfono' : '🖐 Arrastrá para mirar');
+  m.textContent = (state.camOn ? '📷 Cámara' : '🌄 Escena simulada') + ' · ' + (state.gyro ? '🧭 Giroscopio activo' : '⚠️ Sin giroscopio');
   m.classList.remove('faded');
   setTimeout(() => m.classList.add('faded'), 4000);
+}
+
+const HTTPS_WARNING = 'Accede mediante HTTPS para habilitar el giroscopio';
+function sensorProblem(motion) {
+  if (!window.isSecureContext || motion === 'insecure') return HTTPS_WARNING;
+  if (motion === 'denied') return 'Permiso de movimiento denegado. Recargá la página y tocá «Permitir».';
+  return HTTPS_WARNING + ' (este dispositivo o navegador no envía datos de orientación).';
 }
 
 function startRound() {
@@ -945,12 +957,12 @@ function startRound() {
   state.photos = [];
   state.best = {};
   shownSecond = -1;
-  if (!state.gyro) { look.yaw = 0; look.pitch = 0; }
+  if (state.gyro) recalibrate();
+  else camera.quaternion.identity();
   camera.updateMatrixWorld();
   spawnCreatures();
   $('scoreVal').textContent = '0';
   $('filmVal').textContent = state.shots;
-  $('filmLeft').textContent = state.shots + ' fotos';
   $('shutter').classList.remove('empty');
   $('lastThumb').classList.remove('on');
   $('intro').classList.add('hidden');
@@ -959,34 +971,43 @@ function startRound() {
   updateModeBadge();
 }
 
-async function boot(motionPromise, cameraPromise) {
+async function requestMotion() {
+  if (!window.isSecureContext) return 'insecure';
+  if (typeof DeviceOrientationEvent === 'undefined') return 'unsupported';
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      return await DeviceOrientationEvent.requestPermission();
+    } catch (err) {
+      return 'denied';
+    }
+  }
+  return 'granted';
+}
+
+$('startBtn').addEventListener('click', async () => {
   const btn = $('startBtn');
+  if (btn.disabled) return;
+  audio();
   btn.disabled = true;
-  btn.textContent = 'Preparando cámara…';
-  const [motion, cam] = await Promise.all([motionPromise, cameraPromise]);
+  btn.textContent = 'Pidiendo permisos…';
+  const motion = await requestMotion();
   if (motion === 'granted') addEventListener('deviceorientation', onDeviceOrientation);
-  state.gyro = motion === 'granted' ? await waitForGyro(1200) : false;
-  if (state.gyro) gyroQuaternion(camera.quaternion);
+  const cam = await startCamera();
+  state.gyro = motion === 'granted' ? await waitForGyro(1500) : false;
   state.camOn = cam.ok;
   env.visible = !cam.ok;
   video.classList.toggle('hidden', !cam.ok);
   updateProjection();
+  $('gyroWarn').textContent = state.gyro ? '' : sensorProblem(motion);
   btn.disabled = false;
-  btn.textContent = 'Abrir cámara y jugar';
+  btn.textContent = 'Iniciar misión';
   startRound();
-  const notes = [];
-  if (!cam.ok) notes.push(cam.reason + ' Usamos una escena simulada.');
-  if (!state.gyro) notes.push(motion === 'denied' ? 'Sin permiso de movimiento: arrastrá para mirar.' : 'Sin giroscopio: arrastrá para mirar.');
-  if (notes.length) notice(notes.join(' '), 5500);
-}
+  if (!cam.ok) notice(cam.reason + ' Usamos una escena simulada.', 5500);
+});
 
-$('startBtn').addEventListener('click', () => {
-  audio();
-  let motionPromise = Promise.resolve(typeof DeviceOrientationEvent !== 'undefined' ? 'granted' : 'unavailable');
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    motionPromise = DeviceOrientationEvent.requestPermission().catch(() => 'denied');
-  }
-  boot(motionPromise, startCamera());
+$('recal').addEventListener('click', () => {
+  recalibrate();
+  notice('Vista recalibrada: hacia donde apuntás ahora es el frente.', 2500);
 });
 
 $('shutter').addEventListener('click', takeShot);
@@ -1102,8 +1123,10 @@ async function sharePhoto(p) {
   }
 }
 
-if (!window.isSecureContext) {
-  $('introMsg').textContent = 'Abrí el juego desde una dirección HTTPS (por ejemplo GitHub Pages) para usar la cámara y el giroscopio.';
+if (!window.isSecureContext || typeof DeviceOrientationEvent === 'undefined') {
+  const w = $('introWarn');
+  w.textContent = HTTPS_WARNING;
+  w.classList.remove('hidden');
 }
 
 /* ===================== Bucle principal ===================== */
@@ -1119,16 +1142,8 @@ function loop(now) {
 
   if (state.gyro) {
     gyroQuaternion(targetQ);
-  } else {
-    const ks = 1.6 * dt;
-    if (keys.has('ArrowLeft')) look.yaw += ks;
-    if (keys.has('ArrowRight')) look.yaw -= ks;
-    if (keys.has('ArrowUp')) look.pitch = clamp(look.pitch + ks, -1.2, 1.2);
-    if (keys.has('ArrowDown')) look.pitch = clamp(look.pitch - ks, -1.2, 1.2);
-    targetQ.setFromEuler(_euler.set(look.pitch, look.yaw, 0, 'YXZ'));
+    camera.quaternion.slerp(targetQ, 1 - Math.pow(0.45, dt * 60));
   }
-  const k = state.gyro ? 0.55 : 0.35;
-  camera.quaternion.slerp(targetQ, 1 - Math.pow(1 - k, dt * 60));
   omega = omega * 0.7 + (camera.quaternion.angleTo(prevQ) / dt) * 0.3;
   prevQ.copy(camera.quaternion);
   camera.updateMatrixWorld();
