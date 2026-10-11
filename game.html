@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0B">
+<title>Forest Snap</title>
+<style>
+  :root{
+    --ink:#F2F0EC;
+    --mut:#9A968E;
+    --accent:#FFD24A;
+    --danger:#FF5C5C;
+    --good:#5CFF9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{
+    height:100%;width:100%;overflow:hidden;background:#000;color:var(--ink);
+    -webkit-user-select:none;user-select:none;touch-action:none;overscroll-behavior:none;
+    font-family:"Helvetica Neue",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  #gameCanvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+
+  /* ---------------- HUD overlay ---------------- */
+  #hud{position:fixed;inset:0;pointer-events:none;z-index:10;display:flex;flex-direction:column;justify-content:space-between}
+  .safe-top{padding-top:env(safe-area-inset-top)}
+  .safe-bottom{padding-bottom:env(safe-area-inset-bottom)}
+
+  /* viewfinder frame */
+  #viewfinder{position:fixed;inset:0;pointer-events:none;z-index:5}
+  .corner{position:absolute;width:26px;height:26px;border-color:rgba(255,255,255,.75)}
+  .c-tl{top:14%;left:6%;border-top:3px solid;border-left:3px solid}
+  .c-tr{top:14%;right:6%;border-top:3px solid;border-right:3px solid}
+  .c-bl{bottom:20%;left:6%;border-bottom:3px solid;border-left:3px solid}
+  .c-br{bottom:20%;right:6%;border-bottom:3px solid;border-right:3px solid}
+  #crosshair{position:absolute;top:50%;left:50%;width:34px;height:34px;transform:translate(-50%,-50%);
+    border:1.5px solid rgba(255,255,255,.55);border-radius:50%}
+  #crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(255,255,255,.55)}
+  #crosshair::before{left:50%;top:-7px;width:1.5px;height:6px;transform:translateX(-50%)}
+  #crosshair::after{left:50%;bottom:-7px;width:1.5px;height:6px;transform:translateX(-50%)}
+
+  /* top bar: score + timer */
+  #topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 16px;z-index:11;pointer-events:none}
+  .pill{background:rgba(0,0,0,.45);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);
+    border-radius:14px;padding:8px 14px;font-size:13px;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+  #scorePill{font-weight:700;color:var(--accent)}
+  #timerBar{width:140px;height:8px;background:rgba(255,255,255,.18);border-radius:5px;overflow:hidden;margin-top:4px}
+  #timerFill{height:100%;width:100%;background:linear-gradient(90deg,var(--good),var(--accent));transition:width .2s linear}
+  #filmPill{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+
+  /* bottom shutter bar */
+  #bottombar{display:flex;justify-content:center;align-items:center;padding-bottom:calc(26px + env(safe-area-inset-bottom));
+    pointer-events:none;position:relative}
+  #shutterBtn{pointer-events:auto;width:82px;height:82px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff,#d8d8d8 60%,#a8a8a8);
+    border:5px solid rgba(255,255,255,.85);box-shadow:0 6px 22px rgba(0,0,0,.5),inset 0 0 10px rgba(0,0,0,.15);
+    display:flex;align-items:center;justify-content:center;transition:transform .08s ease}
+  #shutterBtn:active{transform:scale(.88)}
+  #shutterBtn .ring{width:62px;height:62px;border-radius:50%;border:2px solid rgba(0,0,0,.2)}
+  #shotCounter{position:absolute;right:20px;bottom:calc(36px + env(safe-area-inset-bottom));
+    pointer-events:none;text-align:right}
+
+  /* flash */
+  #flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:20}
+
+  /* score toast */
+  #toast{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%) scale(.7);
+    pointer-events:none;z-index:21;opacity:0;text-align:center;transition:opacity .25s ease,transform .25s ease}
+  #toast .pts{font-size:46px;font-weight:800;color:var(--accent);text-shadow:0 2px 14px rgba(0,0,0,.6)}
+  #toast .stars{font-size:26px;letter-spacing:4px;margin-top:2px;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+  #toast .tag{font-size:13px;color:var(--good);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;
+    text-shadow:0 2px 8px rgba(0,0,0,.6)}
+
+  /* intro / permission screen */
+  .screen{position:fixed;inset:0;z-index:30;background:linear-gradient(160deg,#0d1b16,#06130f 60%,#03090a);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    padding:26px calc(28px + env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) calc(28px + env(safe-area-inset-left));
+    gap:18px}
+  .screen h1{font-size:clamp(26px,8vw,38px);letter-spacing:.06em;font-weight:800;
+    background:linear-gradient(90deg,#FFD24A,#5CFF9D);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .screen p{font-size:14px;color:var(--mut);max-width:320px;line-height:1.5}
+  .btn{pointer-events:auto;padding:16px 34px;border-radius:30px;border:none;font-size:15px;font-weight:700;
+    letter-spacing:.03em;background:linear-gradient(135deg,#FFD24A,#FF9F4A);color:#1a1200;
+    box-shadow:0 8px 24px rgba(255,170,30,.35);text-transform:uppercase}
+  .btn:active{transform:scale(.96)}
+  .btn.secondary{background:rgba(255,255,255,.1);color:var(--ink);box-shadow:none;border:1px solid rgba(255,255,255,.25)}
+  .emoji-row{font-size:34px;letter-spacing:10px;margin-bottom:4px}
+  .hidden{display:none !important}
+
+  /* control mode badge */
+  #controlBadge{position:fixed;top:calc(68px + env(safe-area-inset-top));left:16px;z-index:11;
+    font-size:11px;padding:5px 10px;border-radius:10px;background:rgba(0,0,0,.4);
+    border:1px solid rgba(255,255,255,.15);color:var(--mut);pointer-events:none}
+
+  /* gallery screen */
+  #gallery{position:fixed;inset:0;z-index:40;background:#060a09;overflow-y:auto;
+    padding:calc(30px + env(safe-area-inset-top)) 18px calc(30px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column;align-items:center;gap:16px;touch-action:pan-y}
+  #gallery h1{font-size:24px;letter-spacing:.05em}
+  #totalScore{font-size:42px;font-weight:800;color:var(--accent)}
+  #photoGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:420px}
+  .photoCard{background:#11201b;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+    display:flex;flex-direction:column}
+  .photoCard canvas{width:100%;display:block;background:#0a1512}
+  .photoCard .info{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;font-size:12px}
+  .photoCard .stars{color:var(--accent);font-size:13px}
+  .photoCard .pts{font-weight:700}
+
+  @media (orientation:landscape){
+    .c-bl,.c-br{bottom:16%}
+    #shutterBtn{width:68px;height:68px}
+    #shutterBtn .ring{width:50px;height:50px}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="viewfinder">
+  <div class="corner c-tl"></div>
+  <div class="corner c-tr"></div>
+  <div class="corner c-bl"></div>
+  <div class="corner c-br"></div>
+  <div id="crosshair"></div>
+</div>
+
+<div id="controlBadge" class="hidden">Toque: arrastra para apuntar</div>
+
+<div id="hud">
+  <div id="topbar" class="safe-top">
+    <div class="pill" id="scorePillWrap">
+      Puntos: <span id="scorePill">0</span>
+    </div>
+    <div class="pill" id="filmPill">
+      <div><span id="shotsLeft">6</span> / <span id="shotsTotal">6</span> fotos</div>
+      <div id="timerBar"><div id="timerFill"></div></div>
+    </div>
+  </div>
+  <div id="bottombar" class="safe-bottom">
+    <button id="shutterBtn" aria-label="Disparar"><div class="ring"></div></button>
+  </div>
+</div>
+
+<div id="flash"></div>
+<div id="toast">
+  <div class="pts" id="toastPts">+0</div>
+  <div class="stars" id="toastStars">☆☆☆</div>
+  <div class="tag" id="toastTag">¡BUENA TOMA!</div>
+</div>
+
+<div class="screen" id="introScreen">
+  <div class="emoji-row">🦊🦉🐢🐉🦋</div>
+  <h1>FOREST SNAP</h1>
+  <p>Recorré el sendero del bosque a bordo del vagón fotográfico. Encuadrá a las criaturas en el centro del visor y disparalas en el momento justo para conseguir el mejor puntaje.</p>
+  <button class="btn" id="startBtn">Comenzar recorrido</button>
+  <p id="gyroNote" style="font-size:12px;opacity:.7">Movés la cámara inclinando el teléfono, o arrastrando con el dedo si preferís.</p>
+</div>
+
+<div class="screen hidden" id="gallery">
+  <h1>Resumen del recorrido</h1>
+  <div id="totalScore">0</div>
+  <div id="photoGrid"></div>
+  <button class="btn" id="restartBtn">Reiniciar recorrido</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+
+/* =========================================================================
+   AUDIO — obturador sintetizado con Web Audio API (sin archivos externos)
+   ========================================================================= */
+let audioCtx = null;
+function getAudioCtx(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+function playShutterSound(){
+  const ctx = getAudioCtx();
+  const now = ctx.currentTime;
+
+  const click1 = ctx.createOscillator();
+  const clickGain = ctx.createGain();
+  click1.type = 'square';
+  click1.frequency.setValueAtTime(1800, now);
+  click1.frequency.exponentialRampToValueAtTime(400, now + 0.03);
+  clickGain.gain.setValueAtTime(0.35, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+  click1.connect(clickGain).connect(ctx.destination);
+  click1.start(now);
+  click1.stop(now + 0.04);
+
+  const noiseBufferSize = ctx.sampleRate * 0.08;
+  const noiseBuffer = ctx.createBuffer(1, noiseBufferSize, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for(let i=0;i<noiseBufferSize;i++){
+    data[i] = (Math.random()*2-1) * Math.pow(1 - i/noiseBufferSize, 2);
+  }
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.value = 2200;
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.5, now + 0.01);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+  noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
+  noise.start(now + 0.01);
+  noise.stop(now + 0.1);
+
+  const click2 = ctx.createOscillator();
+  const click2Gain = ctx.createGain();
+  click2.type = 'square';
+  click2.frequency.setValueAtTime(900, now + 0.1);
+  click2.frequency.exponentialRampToValueAtTime(200, now + 0.14);
+  click2Gain.gain.setValueAtTime(0.28, now + 0.1);
+  click2Gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+  click2.connect(click2Gain).connect(ctx.destination);
+  click2.start(now + 0.1);
+  click2.stop(now + 0.17);
+}
+function playChime(good){
+  const ctx = getAudioCtx();
+  const now = ctx.currentTime;
+  const freqs = good ? [523.25, 659.25, 783.99, 1046.5] : [392, 440];
+  freqs.forEach((f, i)=>{
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    const t = now + i*0.07;
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(0.18, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(t);
+    osc.stop(t + 0.55);
+  });
+}
+
+/* =========================================================================
+   THREE.JS SETUP
+   ========================================================================= */
+const canvas = document.getElementById('gameCanvas');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha:false, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(62, window.innerWidth/window.innerHeight, 0.1, 500);
+
+function onResize(){
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', onResize);
+window.addEventListener('orientationchange', ()=> setTimeout(onResize, 200));
+
+/* ---------------- Sky gradient ---------------- */
+function makeSkyDome(){
+  const skyGeo = new THREE.SphereGeometry(400, 24, 16);
+  const skyMat = new THREE.ShaderMaterial({
+    uniforms: {
+      topColor: { value: new THREE.Color(0x6ec6ff) },
+      bottomColor: { value: new THREE.Color(0xfef3d0) },
+      offset: { value: 20 },
+      exponent: { value: 0.7 }
+    },
+    vertexShader: `
+      varying vec3 vWorldPosition;
+      void main(){
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 topColor;
+      uniform vec3 bottomColor;
+      uniform float offset;
+      uniform float exponent;
+      varying vec3 vWorldPosition;
+      void main(){
+        float h = normalize(vWorldPosition + vec3(0.0, offset, 0.0)).y;
+        gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+      }
+    `,
+    side: THREE.BackSide
+  });
+  return new THREE.Mesh(skyGeo, skyMat);
+}
+scene.add(makeSkyDome());
+
+/* ---------------- Lighting ---------------- */
+const hemiLight = new THREE.HemisphereLight(0xfff6e0, 0x3a5a30, 0.95);
+scene.add(hemiLight);
+const sunLight = new THREE.DirectionalLight(0xfff0cc, 0.9);
+sunLight.position.set(40, 60, 20);
+scene.add(sunLight);
+scene.fog = new THREE.Fog(0xdff0e0, 60, 220);
+
+/* ---------------- Terrain ---------------- */
+const groundGeo = new THREE.PlaneGeometry(400, 400, 60, 60);
+groundGeo.rotateX(-Math.PI/2);
+const posAttr = groundGeo.attributes.position;
+for(let i=0;i<posAttr.count;i++){
+  const x = posAttr.getX(i), z = posAttr.getZ(i);
+  const h = Math.sin(x*0.05)*1.6 + Math.cos(z*0.045)*1.8 + Math.sin((x+z)*0.02)*2.2;
+  posAttr.setY(i, h);
+}
+groundGeo.computeVertexNormals();
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x5aa14a, flatShading: true, roughness: 0.95 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+scene.add(ground);
+
+function terrainHeight(x,z){
+  return Math.sin(x*0.05)*1.6 + Math.cos(z*0.045)*1.8 + Math.sin((x+z)*0.02)*2.2;
+}
+
+/* ---------------- Low-poly trees ---------------- */
+const trunkGeo = new THREE.CylinderGeometry(0.35, 0.5, 3, 6);
+const trunkMat = new THREE.MeshStandardMaterial({ color: 0x6b4a2f, flatShading: true });
+const leafGeoA = new THREE.ConeGeometry(2.2, 3.4, 7);
+const leafGeoB = new THREE.IcosahedronGeometry(2.0, 0);
+const leafColors = [0x2f7a3a, 0x3c8f45, 0x2a6b36, 0x4aa355];
+
+function makeTree(x, z, scale){
+  const group = new THREE.Group();
+  const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+  trunk.position.y = 1.5;
+  group.add(trunk);
+  const leafGeo = Math.random() > 0.5 ? leafGeoA : leafGeoB;
+  const leafMat = new THREE.MeshStandardMaterial({
+    color: leafColors[(Math.random()*leafColors.length)|0],
+    flatShading: true
+  });
+  const leaves = new THREE.Mesh(leafGeo, leafMat);
+  leaves.position.y = 3.6;
+  leaves.rotation.y = Math.random()*Math.PI;
+  group.add(leaves);
+  group.position.set(x, terrainHeight(x,z), z);
+  group.scale.setScalar(scale);
+  return group;
+}
+
+const PATH_HALF_WIDTH = 9;
+function distanceFromPathApprox(x, z){
+  let best = Infinity;
+  for(let i=0;i<pathPoints.length;i++){
+    const p = pathPoints[i];
+    const d = Math.hypot(x-p.x, z-p.z);
+    if(d < best) best = d;
+  }
+  return best;
+}
+
+/* ---------------- Rocks / bushes decoration ---------------- */
+const rockGeo = new THREE.DodecahedronGeometry(0.9, 0);
+const rockMat = new THREE.MeshStandardMaterial({ color: 0x8a8a82, flatShading: true });
+function makeRock(x,z,scale){
+  const r = new THREE.Mesh(rockGeo, rockMat);
+  r.position.set(x, terrainHeight(x,z)+0.3*scale, z);
+  r.scale.setScalar(scale);
+  r.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+  return r;
+}
+
+/* =========================================================================
+   RAIL PATH — curva cerrada que define el recorrido de la cámara
+   ========================================================================= */
+const railControlPoints = [
+  new THREE.Vector3(0, 0, 0),
+  new THREE.Vector3(18, 0, -22),
+  new THREE.Vector3(10, 0, -52),
+  new THREE.Vector3(-14, 0, -70),
+  new THREE.Vector3(-40, 0, -58),
+  new THREE.Vector3(-46, 0, -28),
+  new THREE.Vector3(-30, 0, -4),
+  new THREE.Vector3(-10, 0, 10),
+  new THREE.Vector3(10, 0, 18),
+  new THREE.Vector3(0, 0, 0)
+];
+const railCurve = new THREE.CatmullRomCurve3(railControlPoints, true, 'catmullrom', 0.5);
+const RAIL_SAMPLES = 800;
+const pathPoints = railCurve.getPoints(RAIL_SAMPLES);
+for(const p of pathPoints){
+  p.y = terrainHeight(p.x, p.z) + 3.2;
+}
+
+/* scatter trees/rocks avoiding the path corridor */
+(function scatterDecor(){
+  let placed = 0, attempts = 0;
+  while(placed < 140 && attempts < 2000){
+    attempts++;
+    const x = (Math.random()-0.5)*170;
+    const z = (Math.random()-0.5)*170;
+    if(distanceFromPathApprox(x,z) < PATH_HALF_WIDTH) continue;
+    scene.add(makeTree(x, z, 0.8 + Math.random()*0.9));
+    placed++;
+  }
+  for(let i=0;i<50;i++){
+    const x = (Math.random()-0.5)*160;
+    const z = (Math.random()-0.5)*160;
+    if(distanceFromPathApprox(x,z) < PATH_HALF_WIDTH*0.7) continue;
+    scene.add(makeRock(x, z, 0.5 + Math.random()*0.8));
+  }
+})();
+
+/* =========================================================================
+   CREATURES — sprites con texturas de emoji generadas en Canvas 2D
+   ========================================================================= */
+const CREATURE_TYPES = [
+  { emoji: '🦊', special: '✨🦊', name: 'Zorro' },
+  { emoji: '🦉', special: '🦉💫', name: 'Lechuza' },
+  { emoji: '🐢', special: '🐢🌟', name: 'Tortuga' },
+  { emoji: '🐉', special: '🐉🔥', name: 'Dragón' },
+  { emoji: '🦋', special: '🦋✨', name: 'Mariposa' }
+];
+
+function makeEmojiTexture(emoji){
+  const size = 128;
+  const cv = document.createElement('canvas');
+  cv.width = size; cv.height = size;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,size,size);
+  ctx.font = `${size*0.8}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(emoji, size/2, size/2 + size*0.05);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.needsUpdate = true;
+  return tex;
+}
+
+const textureCache = {};
+function getTexture(emoji){
+  if(!textureCache[emoji]) textureCache[emoji] = makeEmojiTexture(emoji);
+  return textureCache[emoji];
+}
+
+class Creature {
+  constructor(type, position){
+    this.type = type;
+    this.normalTex = getTexture(type.emoji);
+    this.specialTex = getTexture(type.special);
+    this.material = new THREE.SpriteMaterial({ map: this.normalTex, transparent: true });
+    this.sprite = new THREE.Sprite(this.material);
+    this.sprite.scale.set(3.2, 3.2, 1);
+    this.sprite.position.copy(position);
+    this.baseY = position.y;
+    this.isSpecialPose = false;
+    this.poseTimer = Math.random()*4;
+    this.poseDuration = 1.1;
+    this.cycleDuration = 3.5 + Math.random()*2.5;
+    this.bobPhase = Math.random()*Math.PI*2;
+    this.photographed = false;
+    scene.add(this.sprite);
+  }
+  update(dt, elapsed){
+    this.poseTimer += dt;
+    const cyclePos = this.poseTimer % this.cycleDuration;
+    const shouldBeSpecial = cyclePos < this.poseDuration;
+    if(shouldBeSpecial !== this.isSpecialPose){
+      this.isSpecialPose = shouldBeSpecial;
+      this.material.map = shouldBeSpecial ? this.specialTex : this.normalTex;
+      this.material.needsUpdate = true;
+    }
+    this.sprite.position.y = this.baseY + Math.sin(elapsed*1.6 + this.bobPhase)*0.3
+      + (this.isSpecialPose ? Math.abs(Math.sin(elapsed*6))*0.5 : 0);
+  }
+}
+
+const creatures = [];
+function spawnCreatures(){
+  for(const c of creatures){ scene.remove(c.sprite); }
+  creatures.length = 0;
+  const count = 26;
+  for(let i=0;i<count;i++){
+    const t = (i / count + Math.random()*0.02) % 1;
+    const idx = Math.floor(t * (RAIL_SAMPLES-1));
+    const pathP = pathPoints[idx];
+    const sideOffset = (Math.random() > 0.5 ? 1 : -1) * (3.5 + Math.random()*7);
+    const tangent = railCurve.getTangent(t);
+    const side = new THREE.Vector3(-tangent.z, 0, tangent.x).normalize();
+    const x = pathP.x + side.x * sideOffset;
+    const z = pathP.z + side.z * sideOffset;
+    const y = terrainHeight(x,z) + 1.6 + Math.random()*1.5;
+    const type = CREATURE_TYPES[(Math.random()*CREATURE_TYPES.length)|0];
+    creatures.push(new Creature(type, new THREE.Vector3(x,y,z)));
+  }
+}
+spawnCreatures();
+
+/* =========================================================================
+   CAMERA RAIL MOVEMENT
+   ========================================================================= */
+let railT = 0;
+const RAIL_SPEED = 0.014;
+
+/* look offset controlled by gyro or touch, in radians, relative to forward */
+let lookYaw = 0;
+let lookPitch = 0;
+const MAX_YAW = Math.PI*0.42;
+const MAX_PITCH = 0.55;
+
+function updateCameraRail(dt){
+  railT = (railT + RAIL_SPEED*dt*60/60) % 1;
+  const pos = railCurve.getPointAt(railT);
+  const nextPos = railCurve.getPointAt((railT + 0.002) % 1);
+  camera.position.set(pos.x, pos.y, pos.z);
+
+  const forward = new THREE.Vector3().subVectors(nextPos, pos).normalize();
+  const baseYaw = Math.atan2(forward.x, forward.z);
+
+  const targetQuat = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(lookPitch, baseYaw + lookYaw, 0, 'YXZ')
+  );
+  camera.quaternion.slerp(targetQuat, Math.min(1, dt*6));
+}
+
+/* =========================================================================
+   CONTROLS — giroscopio con fallback táctil
+   ========================================================================= */
+let gyroActive = false;
+let gyroBase = null;
+
+function handleOrientation(e){
+  if(e.beta === null || e.gamma === null) return;
+  const beta = THREE.MathUtils.degToRad(e.beta);
+  const gamma = THREE.MathUtils.degToRad(e.gamma);
+  if(!gyroBase){
+    gyroBase = { beta, gamma };
+  }
+  let dYaw = (gamma - gyroBase.gamma) * 1.4;
+  let dPitch = (beta - gyroBase.beta) * 1.1;
+  dYaw = THREE.MathUtils.clamp(dYaw, -MAX_YAW, MAX_YAW);
+  dPitch = THREE.MathUtils.clamp(dPitch, -MAX_PITCH, MAX_PITCH);
+  lookYaw = dYaw;
+  lookPitch = dPitch;
+  gyroActive = true;
+}
+
+let touchActive = false;
+let touchStart = null;
+let touchYawStart = 0, touchPitchStart = 0;
+
+function setupTouchControls(){
+  canvas.addEventListener('pointerdown', (e)=>{
+    if(e.target !== canvas) return;
+    touchActive = true;
+    touchStart = { x: e.clientX, y: e.clientY };
+    touchYawStart = lookYaw;
+    touchPitchStart = lookPitch;
+  });
+  window.addEventListener('pointermove', (e)=>{
+    if(!touchActive || !touchStart) return;
+    const dx = e.clientX - touchStart.x;
+    const dy = e.clientY - touchStart.y;
+    const w = window.innerWidth, h = window.innerHeight;
+    lookYaw = THREE.MathUtils.clamp(touchYawStart + (dx/w)*MAX_YAW*2.2, -MAX_YAW, MAX_YAW);
+    lookPitch = THREE.MathUtils.clamp(touchPitchStart - (dy/h)*MAX_PITCH*2.2, -MAX_PITCH, MAX_PITCH);
+  });
+  window.addEventListener('pointerup', ()=>{ touchActive = false; });
+  window.addEventListener('pointercancel', ()=>{ touchActive = false; });
+}
+
+function requestGyroPermission(){
+  if(typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+    DeviceOrientationEvent.requestPermission().then(state=>{
+      if(state === 'granted'){
+        window.addEventListener('deviceorientation', handleOrientation, true);
+        document.getElementById('controlBadge').textContent = 'Giroscopio activo';
+      } else {
+        document.getElementById('controlBadge').textContent = 'Toque: arrastra para apuntar';
+      }
+      document.getElementById('controlBadge').classList.remove('hidden');
+    }).catch(()=>{
+      document.getElementById('controlBadge').textContent = 'Toque: arrastra para apuntar';
+      document.getElementById('controlBadge').classList.remove('hidden');
+    });
+  } else if(typeof DeviceOrientationEvent !== 'undefined'){
+    window.addEventListener('deviceorientation', handleOrientation, true);
+    document.getElementById('controlBadge').textContent = 'Giroscopio activo';
+    document.getElementById('controlBadge').classList.remove('hidden');
+    setTimeout(()=>{
+      if(!gyroActive){
+        document.getElementById('controlBadge').textContent = 'Toque: arrastra para apuntar';
+      }
+    }, 1500);
+  } else {
+    document.getElementById('controlBadge').textContent = 'Toque: arrastra para apuntar';
+    document.getElementById('controlBadge').classList.remove('hidden');
+  }
+  setupTouchControls();
+}
+
+/* =========================================================================
+   SCORING — proyección matricial, encuadre, distancia y bonus de pose
+   ========================================================================= */
+const SHOTS_TOTAL = 6;
+const TOUR_DURATION = 95;
+let shotsLeft = SHOTS_TOTAL;
+let totalScore = 0;
+let tourElapsed = 0;
+let tourActive = false;
+const takenPhotos = [];
+
+function evaluateShot(){
+  const projector = new THREE.Vector3();
+  const camForward = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+  let best = null;
+
+  for(const creature of creatures){
+    if(creature.sprite.position.distanceTo(camera.position) > 70) continue;
+    projector.copy(creature.sprite.position);
+    const toCreature = new THREE.Vector3().subVectors(creature.sprite.position, camera.position);
+    const dist = toCreature.length();
+    const dot = toCreature.normalize().dot(camForward);
+    if(dot < 0.35) continue;
+
+    projector.project(camera);
+    if(projector.x < -1.05 || projector.x > 1.05 || projector.y < -1.05 || projector.y > 1.05) continue;
+    if(projector.z > 1) continue;
+
+    const screenDist = Math.sqrt(projector.x*projector.x + projector.y*projector.y);
+    const framingScore = Math.max(0, 1 - screenDist/1.0);
+
+    let distanceScore;
+    const optimal = 18;
+    if(dist < 4){
+      distanceScore = Math.max(0, dist/4) * 0.5;
+    } else {
+      distanceScore = Math.max(0, 1 - Math.abs(dist - optimal)/optimal);
+    }
+
+    const poseMultiplier = creature.isSpecialPose ? 1.6 : 1.0;
+    const rawScore = (framingScore*0.6 + distanceScore*0.4) * 100 * poseMultiplier;
+
+    if(!best || rawScore > best.rawScore){
+      best = { creature, rawScore, framingScore, distanceScore, dist, projX: projector.x, projY: projector.y };
+    }
+  }
+  return best;
+}
+
+function capturePhotoThumbnail(){
+  const thumbCanvas = document.createElement('canvas');
+  const tw = 240, th = 160;
+  thumbCanvas.width = tw; thumbCanvas.height = th;
+  const tctx = thumbCanvas.getContext('2d');
+  const full = renderer.domElement;
+  tctx.drawImage(full, 0, 0, full.width, full.height, 0, 0, tw, th);
+  return thumbCanvas;
+}
+
+function showFlash(){
+  const flash = document.getElementById('flash');
+  flash.style.transition = 'none';
+  flash.style.opacity = '0.9';
+  requestAnimationFrame(()=>{
+    flash.style.transition = 'opacity .35s ease';
+    flash.style.opacity = '0';
+  });
+}
+
+function showToast(points, stars, good){
+  const toast = document.getElementById('toast');
+  document.getElementById('toastPts').textContent = '+' + Math.round(points);
+  document.getElementById('toastStars').textContent = '★'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('toastTag').textContent = good ?
+    (stars === 3 ? '¡FOTO PERFECTA!' : stars === 2 ? '¡MUY BUENA TOMA!' : '¡BUENA TOMA!') :
+    'FOTO EN BLANCO';
+  document.getElementById('toastTag').style.color = good ? 'var(--good)' : 'var(--danger)';
+  toast.style.transition = 'none';
+  toast.style.opacity = '1';
+  toast.style.transform = 'translate(-50%,-50%) scale(1.08)';
+  requestAnimationFrame(()=>{
+    toast.style.transition = 'opacity .25s ease, transform .25s ease';
+    toast.style.transform = 'translate(-50%,-50%) scale(1)';
+    setTimeout(()=>{
+      toast.style.opacity = '0';
+      toast.style.transform = 'translate(-50%,-50%) scale(.85)';
+    }, 900);
+  });
+}
+
+function takeShot(){
+  if(!tourActive || shotsLeft <= 0) return;
+  shotsLeft--;
+  document.getElementById('shotsLeft').textContent = shotsLeft;
+
+  playShutterSound();
+  showFlash();
+
+  const result = evaluateShot();
+  const thumb = capturePhotoThumbnail();
+
+  let points = 0, stars = 0, good = false;
+  if(result){
+    points = Math.max(8, Math.round(result.rawScore));
+    stars = points >= 85 ? 3 : points >= 55 ? 2 : 1;
+    good = true;
+    if(result.creature.isSpecialPose) result.creature.photographed = true;
+    playChime(true);
+  } else {
+    points = 0; stars = 0; good = false;
+    playChime(false);
+  }
+
+  totalScore += points;
+  document.getElementById('scorePill').textContent = totalScore;
+  showToast(points, stars, good);
+
+  takenPhotos.push({ canvas: thumb, points, stars, name: result ? result.creature.type.name : '—' });
+
+  if(shotsLeft <= 0){
+    setTimeout(endTour, 1300);
+  }
+}
+
+/* =========================================================================
+   GAME FLOW
+   ========================================================================= */
+function startTour(){
+  tourActive = true;
+  tourElapsed = 0;
+  railT = 0;
+  shotsLeft = SHOTS_TOTAL;
+  totalScore = 0;
+  takenPhotos.length = 0;
+  document.getElementById('scorePill').textContent = '0';
+  document.getElementById('shotsLeft').textContent = shotsLeft;
+  document.getElementById('shotsTotal').textContent = SHOTS_TOTAL;
+  document.getElementById('timerFill').style.width = '100%';
+  spawnCreatures();
+  document.getElementById('introScreen').classList.add('hidden');
+  document.getElementById('gallery').classList.add('hidden');
+}
+
+function endTour(){
+  tourActive = false;
+  const gallery = document.getElementById('gallery');
+  document.getElementById('totalScore').textContent = totalScore;
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = '';
+  const sorted = [...takenPhotos].sort((a,b)=>b.points-a.points);
+  for(const photo of sorted){
+    const card = document.createElement('div');
+    card.className = 'photoCard';
+    card.appendChild(photo.canvas);
+    const info = document.createElement('div');
+    info.className = 'info';
+    const starsEl = document.createElement('div');
+    starsEl.className = 'stars';
+    starsEl.textContent = '★'.repeat(photo.stars) + '☆'.repeat(3-photo.stars);
+    const ptsEl = document.createElement('div');
+    ptsEl.className = 'pts';
+    ptsEl.textContent = photo.points + ' pts';
+    info.appendChild(starsEl);
+    info.appendChild(ptsEl);
+    card.appendChild(info);
+    grid.appendChild(card);
+  }
+  gallery.classList.remove('hidden');
+}
+
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  getAudioCtx();
+  requestGyroPermission();
+  startTour();
+});
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  startTour();
+});
+document.getElementById('shutterBtn').addEventListener('click', takeShot);
+document.getElementById('shutterBtn').addEventListener('touchstart', (e)=>{ e.preventDefault(); takeShot(); }, { passive:false });
+
+document.addEventListener('keydown', (e)=>{
+  if(e.code === 'Space'){ e.preventDefault(); takeShot(); }
+});
+
+/* =========================================================================
+   MAIN LOOP
+   ========================================================================= */
+let lastTime = performance.now();
+function animate(now){
+  requestAnimationFrame(animate);
+  const dt = Math.min(0.05, (now - lastTime)/1000);
+  lastTime = now;
+
+  if(tourActive){
+    tourElapsed += dt;
+    updateCameraRail(dt);
+    for(const c of creatures) c.update(dt, tourElapsed);
+
+    const remaining = Math.max(0, TOUR_DURATION - tourElapsed);
+    document.getElementById('timerFill').style.width = (remaining/TOUR_DURATION*100) + '%';
+    if(remaining <= 0 && shotsLeft > 0){
+      shotsLeft = 0;
+      document.getElementById('shotsLeft').textContent = 0;
+      endTour();
+    }
+  }
+
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>
