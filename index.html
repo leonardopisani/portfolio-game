@@ -270,7 +270,7 @@
   .tecl .btn.borrar{font-size:16px}
   .tecl .btn{padding:11px 0;letter-spacing:0;text-indent:0;font-size:15px;min-width:0}
   .cruz{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
-    gap:7px;width:min(46vw,24vh,172px);aspect-ratio:1;margin:0 auto;touch-action:none}
+    gap:12px;width:min(50vw,25vh,188px);aspect-ratio:1;margin:0 auto;touch-action:none}
   .cruz button{background:none;border:1px solid var(--line);color:var(--mut);cursor:pointer;
     font-size:19px;line-height:1;touch-action:none;
     transition:color .18s,border-color .18s,background .18s}
@@ -884,7 +884,7 @@ const JUEGOS = [
     pasos: [
       'Tenés que llegar a <b>exactamente una ' + sim('corona') + ' en cada fila, en cada columna y en cada región de color</b>.',
       'Tocá una vez para poner ' + sim('equis') + ' y dos veces para poner la ' + sim('corona') + '. La ' + sim('equis') + ' sirve para marcar dónde <b>no</b> puede ir una corona.',
-      '<b>Arrastrá el dedo</b> por el tablero y vas marcando varias ' + sim('equis') + ' de una.',
+      '<b>Arrastrá el dedo</b> por el tablero y vas marcando varias ' + sim('equis') + ' de una. Si arrancás sobre una ' + sim('equis') + ', el mismo gesto las borra.',
       'Dos ' + sim('corona') + ' <b>no pueden tocarse</b>, ni siquiera en diagonal.',
       'Siempre hay una sola solución y se llega razonando, sin adivinar.'
     ]
@@ -1317,17 +1317,25 @@ function abrirReinas() {
     try { tab.setPointerCapture(e.pointerId); } catch (err) { }
   });
   tab.addEventListener('pointermove', e => {
-    if (!arrastre || !listo) return;
+    if (!arrastre || !listo || arrastre.inerte) return;
     const i = celdaEn(e.clientX, e.clientY);
     if (i < 0 || tocadas.has(i)) return;
     if (!arrastre.movido) {
-      /* recién al salir de la primera casilla empieza el barrido */
+      /* Recién al salir de la primera casilla empieza el barrido, y es esa
+         casilla la que decide qué hace: si estaba vacía, el dedo marca ×;
+         si ya tenía una ×, el dedo las borra. Sobre una corona no hace nada,
+         para no voltearla por un roce. */
       arrastre.movido = true;
+      const ini = estado[arrastre.inicio];
+      arrastre.modo = ini === 0 ? 'marcar' : ini === 1 ? 'borrar' : 'nada';
+      if (arrastre.modo === 'nada') return;
       guardar();
-      if (estado[arrastre.inicio] === 0) estado[arrastre.inicio] = 1;
+      estado[arrastre.inicio] = arrastre.modo === 'marcar' ? 1 : 0;
     }
+    if (arrastre.modo === 'nada') return;
     tocadas.add(i);
-    if (estado[i] === 0) { estado[i] = 1; vibra(4); }
+    if (arrastre.modo === 'marcar') { if (estado[i] === 0) { estado[i] = 1; vibra(4); } }
+    else if (estado[i] === 1) { estado[i] = 0; vibra(4); }
     pintar();
   });
   const soltar = e => {
@@ -2228,3 +2236,4 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
+
