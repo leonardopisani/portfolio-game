@@ -4,7 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#0A0A0B">
-<meta name="description" content="Leonardo Pisani — Photo & Video Maker">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Un rato sin scrollear. Cinco juegos para la cabeza. Leonardo Pisani — foto, video y streaming.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0A0B'/%3E%3Cpath d='M6 11l4.8 4.3L16 7l5.2 8.3L26 11l-2.3 13H8.3L6 11z' fill='none' stroke='%23F2F0EC' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230A0A0B'/%3E%3Cpath d='M6 11l4.8 4.3L16 7l5.2 8.3L26 11l-2.3 13H8.3L6 11z' fill='none' stroke='%23F2F0EC' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Leonardo Pisani — Un rato sin scrollear">
+<meta property="og:description" content="Cinco juegos para la cabeza, y una alarma para no pasarte de hora.">
+<!-- La miniatura del link. "vista-previa.jpg" tiene que quedar en la misma
+     carpeta que este archivo. Cuando tengas el dominio, cambiá la línea de
+     abajo por la dirección completa (https://tudominio.com/vista-previa.jpg):
+     varios lectores de enlaces, WhatsApp entre ellos, no resuelven rutas
+     relativas. -->
+<meta property="og:image" content="vista-previa.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Leonardo Pisani — Foto, video y streaming">
+<meta name="twitter:card" content="summary_large_image">
 <title>Leonardo Pisani</title>
 <link rel="stylesheet" href="https://use.typekit.net/bsd8kvm.css">
 <style>
@@ -32,14 +50,77 @@
 </style>
 <style>
   :root{
+    color-scheme:dark;
     --bg:#0A0A0B;
     --ink:#F2F0EC;
+    --sobre:#0A0A0B;        /* texto sobre un relleno de tinta */
     --mut:#9A968E;
     --dim:#5A5750;
     --line:rgba(242,240,236,.14);
     --line2:rgba(242,240,236,.07);
+    --borde:rgba(242,240,236,.28);
+    --celLinea:rgba(242,240,236,.09);
+    --reja:var(--reja);     /* líneas gruesas de cuadrícula */
+    --reja2:var(--reja2);   /* líneas finas */
     --mal:#C8705F;
+    --malBg:#2A1512;
     --ok:#7E9E7A;
+    --aviso:#D9A066;
+    --cel:#0C0C0E;
+    --celFija:#1E1E22;
+    --celAct:#1C1C20;
+    --celPar:#181819;
+    --celIgual:#232329;
+    --celHecha:#111317;
+    --celFijaHecha:#212127;
+    --velo:rgba(10,10,11,.9);
+    --onda:rgba(10,10,11,.18);
+    --vigNegro:rgba(0,0,0,.62);
+    --grano:.055;
+  }
+  /* ---------------------------------------------------------------------
+     TEMA CLARO
+     Sale solo si el teléfono está en claro, y se puede forzar a mano desde
+     el botón de la cabecera. No es el mismo dibujo invertido: el fondo es
+     un papel cálido y los contrastes están recalculados, no espejados.
+     --------------------------------------------------------------------- */
+  @media (prefers-color-scheme:light){
+    :root:not([data-tema="oscuro"]){
+      color-scheme:light;
+      --bg:#F4F2ED; --ink:#1A1916; --sobre:#F4F2ED;
+      --mut:#6A665E; --dim:#9B968C;
+      --line:rgba(26,25,22,.17); --line2:rgba(26,25,22,.08);
+      --borde:rgba(26,25,22,.34);
+      --celLinea:rgba(26,25,22,.12);
+      --reja:rgba(26,25,22,.4); --reja2:rgba(26,25,22,.11);
+      --mal:#A64B38; --malBg:#F2DCD6;
+      --aviso:#9A6520;
+      --cel:#FBFAF7; --celFija:#E7E4DC; --celAct:#E2DFD6;
+      --celPar:#F0EEE7; --celIgual:#DFDBD0;
+      --celHecha:#EFEDE6; --celFijaHecha:#DEDAD0;
+      --velo:rgba(244,242,237,.92);
+      --onda:rgba(244,242,237,.4);
+      --vigNegro:rgba(120,110,95,.22);
+      --grano:.03;
+    }
+  }
+  :root[data-tema="claro"]{
+    color-scheme:light;
+    --bg:#F4F2ED; --ink:#1A1916; --sobre:#F4F2ED;
+    --mut:#6A665E; --dim:#9B968C;
+    --line:rgba(26,25,22,.17); --line2:rgba(26,25,22,.08);
+    --borde:rgba(26,25,22,.34);
+    --celLinea:rgba(26,25,22,.12);
+    --reja:rgba(26,25,22,.4); --reja2:rgba(26,25,22,.11);
+    --mal:#A64B38; --malBg:#F2DCD6;
+    --aviso:#9A6520;
+    --cel:#FBFAF7; --celFija:#E7E4DC; --celAct:#E2DFD6;
+    --celPar:#F0EEE7; --celIgual:#DFDBD0;
+    --celHecha:#EFEDE6; --celFijaHecha:#DEDAD0;
+    --velo:rgba(244,242,237,.92);
+    --onda:rgba(244,242,237,.4);
+    --vigNegro:rgba(120,110,95,.22);
+    --grano:.03;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%;background:var(--bg);color:var(--ink);overflow:hidden;
@@ -48,46 +129,48 @@
     -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
     font-synthesis:none}
   #bg{position:fixed;inset:0;width:100%;height:100%;display:block}
-  #grain{position:fixed;inset:0;pointer-events:none;opacity:.055;mix-blend-mode:overlay}
+  #grain{position:fixed;inset:0;pointer-events:none;opacity:var(--grano);mix-blend-mode:overlay}
   #vig{position:fixed;inset:0;pointer-events:none;
-    background:radial-gradient(ellipse at 50% 44%,transparent 38%,rgba(0,0,0,.62) 100%)}
+    background:radial-gradient(ellipse at 50% 44%,transparent 38%,var(--vigNegro) 100%)}
 
   /* ================= estructura ================= */
   .view{position:fixed;inset:0;display:none;flex-direction:column;
     padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
   .view.on{display:flex}
   .mid{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;gap:14px;padding:0 20px}
+    justify-content:center;gap:12px;padding:0 14px}
 
   /* ================= cabecera ================= */
-  header{height:50px;flex:0 0 50px;display:flex;align-items:center;justify-content:space-between;
+  header{height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:space-between;
     padding:0 16px;gap:10px}
-  .volver{display:flex;align-items:center;gap:9px;background:none;border:0;cursor:pointer;
-    color:var(--mut);font:inherit;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-    padding:8px 4px;transition:color .25s}
-  .volver:hover,.volver:focus-visible{color:var(--ink);outline:none}
-  .volver i{font-style:normal;font-size:13px;line-height:1}
+  .volver{display:flex;align-items:center;gap:7px}
+  .volver i{font-style:normal;font-size:13px;line-height:1;letter-spacing:0;text-indent:0}
   .titulo{font-size:10px;letter-spacing:.34em;text-indent:.34em;color:var(--mut);
     text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   .cab{flex:1;min-width:0;text-align:center}
   .der{display:flex;align-items:center;gap:8px}
+  .btn.chico{min-height:34px;padding:0 12px;font-size:9px;letter-spacing:.16em;
+    text-indent:.16em;white-space:nowrap}
   .ayuda{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:none;
     border:1px solid var(--line);color:var(--mut);font:inherit;font-size:13px;line-height:1;
     cursor:pointer;transition:color .25s,border-color .25s}
-  .ayuda:hover,.ayuda:focus-visible{color:var(--ink);border-color:rgba(242,240,236,.34);outline:none}
-  .regla{flex:0 0 auto;margin:-4px 0 6px;padding:0 24px;text-align:center;
-    font-size:10.5px;line-height:1.55;letter-spacing:.055em;color:var(--dim);
-    max-width:420px;margin-left:auto;margin-right:auto}
+  .ayuda:hover,.ayuda:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
+  #btnTema{display:flex;align-items:center;justify-content:center}
+  #btnTema svg{width:16px;height:16px}
+  #btnTema svg[viewBox^='0 0 38']{width:21px}
+  .regla{flex:0 0 auto;margin:-2px auto 4px;padding:0 20px;text-align:center;
+    font-size:10.5px;line-height:1.5;letter-spacing:.04em;color:var(--dim);
+    max-width:440px}
 
   /* ================= reloj ================= */
   .reloj{display:flex;align-items:center;gap:7px;border:1px solid var(--line);
     padding:7px 11px;background:none;cursor:pointer;color:var(--mut);font:inherit;
     font-size:11px;letter-spacing:.12em;font-variant-numeric:tabular-nums;
     transition:color .25s,border-color .25s}
-  .reloj:hover,.reloj:focus-visible{color:var(--ink);border-color:rgba(242,240,236,.3);outline:none}
-  .reloj.activo{color:var(--ink);border-color:rgba(242,240,236,.3)}
-  .reloj.cerca{color:#D9A066;border-color:rgba(217,160,102,.45)}
+  .reloj:hover,.reloj:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
+  .reloj.activo{color:var(--ink);border-color:var(--reja)}
+  .reloj.cerca{color:var(--aviso);border-color:color-mix(in srgb,var(--aviso) 45%,transparent)}
   .reloj .pt{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55}
   .reloj.activo .pt{animation:lat 2s ease-in-out infinite}
   @keyframes lat{0%,100%{opacity:.25}50%{opacity:1}}
@@ -118,10 +201,10 @@
     transform:scaleY(0);transform-origin:bottom;
     transition:transform .4s cubic-bezier(.2,.75,.3,1)}
   @media (hover:hover) and (pointer:fine){
-    .tile:hover{border-color:var(--ink);color:#0A0A0B;transform:translateY(-3px)}
+    .tile:hover{border-color:var(--ink);color:var(--sobre);transform:translateY(-3px)}
     .tile:hover::after{transform:scaleY(1)}
   }
-  .tile.press{border-color:var(--ink);color:#0A0A0B}
+  .tile.press{border-color:var(--ink);color:var(--sobre)}
   .tile.press::after{transform:scaleY(1)}
   .tile:active{transform:scale(.978)}
   .tile:focus-visible{outline:1px solid var(--ink);outline-offset:4px}
@@ -137,7 +220,7 @@
   .lnk{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
     height:clamp(58px,9.1vh,78px);text-decoration:none;letter-spacing:.30em;text-indent:.30em;
     font-size:clamp(11.5px,3.4vw,13.5px);font-weight:400;text-transform:uppercase;
-    color:var(--ink);background:transparent;border:1px solid rgba(242,240,236,.28);
+    color:var(--ink);background:transparent;border:1px solid var(--borde);
     will-change:transform;
     transition:transform .32s cubic-bezier(.2,.75,.3,1),color .3s ease,border-color .3s ease,
                letter-spacing .45s cubic-bezier(.2,.75,.3,1),box-shadow .32s ease}
@@ -155,32 +238,32 @@
   .lnk:nth-child(2)::before{animation-delay:2.2s}
   @keyframes sheen{0%{left:-60%}52%{left:120%}100%{left:120%}}
   @media (hover:hover) and (pointer:fine){
-    .lnk:hover{color:#0A0A0B;border-color:var(--ink);letter-spacing:.38em;text-indent:.38em;
+    .lnk:hover{color:var(--sobre);border-color:var(--ink);letter-spacing:.38em;text-indent:.38em;
       transform:translateY(-3px);box-shadow:0 14px 38px rgba(0,0,0,.6)}
     .lnk:hover::after{transform:scaleY(1)}
     .lnk:hover .arw{transform:translateX(8px);opacity:1}
     .lnk:hover::before{animation-duration:1.5s;
-      background:linear-gradient(100deg,transparent,rgba(10,10,11,.16),transparent)}
+      background:linear-gradient(100deg,transparent,rgba(127,127,127,.18),transparent)}
   }
-  .lnk.press{color:#0A0A0B;border-color:var(--ink)}
+  .lnk.press{color:var(--sobre);border-color:var(--ink)}
   .lnk.press::after{transform:scaleY(1)}
   .lnk.press .arw{transform:translateX(8px);opacity:1}
   .lnk:active{transform:scale(.976);transition-duration:.09s}
   .lnk:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
   .rip{position:absolute;z-index:2;border-radius:50%;pointer-events:none;
-    background:rgba(10,10,11,.18);
+    background:var(--onda);
     transform:translate(-50%,-50%) scale(0);animation:rip .62s cubic-bezier(.2,.7,.3,1) forwards}
   @keyframes rip{to{transform:translate(-50%,-50%) scale(1);opacity:0}}
 
   /* barra fina de accesos dentro de un juego */
   .barra{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
-    border-top:1px solid var(--line2);padding:9px 0 2px}
+    border-top:1px solid var(--line2);padding:0}
   .firma{font-size:8px;letter-spacing:.24em;text-indent:.24em;color:var(--dim);
     text-transform:uppercase;text-align:center;padding:0 16px}
   .barraLinks{display:flex;align-items:center;justify-content:center;width:100%}
   .barra a{flex:1;max-width:190px;text-align:center;text-decoration:none;color:var(--mut);
     font-size:9.5px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;
-    line-height:40px;transition:color .25s}
+    line-height:42px;transition:color .25s}
   .barra a:hover,.barra a:focus-visible{color:var(--ink);outline:none}
   .barra .sep{width:1px;height:16px;background:var(--line)}
 
@@ -190,10 +273,10 @@
     font-size:10px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
     min-height:48px;padding:0 15px;cursor:pointer;touch-action:manipulation;
     transition:color .18s,border-color .18s,background .18s}
-  .btn:hover,.btn:focus-visible{color:var(--ink);border-color:rgba(242,240,236,.32);outline:none}
-  .btn:active{background:rgba(242,240,236,.07)}
+  .btn:hover,.btn:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
+  .btn:active{background:var(--line2)}
   .btn[disabled]{opacity:.3;cursor:default;pointer-events:none}
-  .btn.sel{color:#0A0A0B;background:var(--ink);border-color:var(--ink)}
+  .btn.sel{color:var(--sobre);background:var(--ink);border-color:var(--ink)}
   .seg{display:inline-flex;border:1px solid var(--line);overflow:hidden}
   .seg .btn{border:0;border-left:1px solid var(--line);min-height:44px;padding:0 17px}
   .seg .btn:first-child{border-left:0}
@@ -202,31 +285,31 @@
   .dato b{color:var(--ink);font-weight:700}
 
   /* ================= tableros ================= */
-  .tab{display:grid;background:var(--line2);border:1px solid rgba(242,240,236,.22);
+  .tab{display:grid;background:var(--line2);border:1px solid var(--borde);
     touch-action:manipulation}
   .cel{position:relative;display:flex;align-items:center;justify-content:center;
-    background:#0C0C0E;cursor:pointer;overflow:hidden;
+    background:var(--cel);cursor:pointer;overflow:hidden;
     font-variant-numeric:tabular-nums;line-height:1;transition:background .18s}
   .cel svg{width:62%;height:62%;overflow:visible}
-  .cel.mal{background:#2A1512}
+  .cel.mal{background:var(--malBg)}
   .cel.mal svg{color:var(--mal)}
 
   /* --- sudoku --- */
   #sudTab{border-width:1px}
   #sudTab .cel{font-size:min(5.2vw,25px);font-weight:400;color:var(--ink);
-    box-shadow:inset 0 0 0 .5px rgba(242,240,236,.08)}
+    box-shadow:inset 0 0 0 .5px var(--reja2)}
   #sudTab .cel.fija{color:var(--mut);font-weight:400}
-  #sudTab .cel.br{box-shadow:inset 0 0 0 .5px rgba(242,240,236,.08),
-                   inset -1px 0 0 0 rgba(242,240,236,.3)}
-  #sudTab .cel.bb{box-shadow:inset 0 0 0 .5px rgba(242,240,236,.08),
-                   inset 0 -1px 0 0 rgba(242,240,236,.3)}
-  #sudTab .cel.br.bb{box-shadow:inset 0 0 0 .5px rgba(242,240,236,.08),
-                   inset -1px 0 0 0 rgba(242,240,236,.3),
-                   inset 0 -1px 0 0 rgba(242,240,236,.3)}
-  #sudTab .cel.act{background:#1C1C20}
-  #sudTab .cel.par{background:#181819}
-  #sudTab .cel.igual{background:#232329}
-  #sudTab .cel.mal{color:var(--mal);background:#2A1512}
+  #sudTab .cel.br{box-shadow:inset 0 0 0 .5px var(--reja2),
+                   inset -1px 0 0 0 var(--reja)}
+  #sudTab .cel.bb{box-shadow:inset 0 0 0 .5px var(--reja2),
+                   inset 0 -1px 0 0 var(--reja)}
+  #sudTab .cel.br.bb{box-shadow:inset 0 0 0 .5px var(--reja2),
+                   inset -1px 0 0 0 var(--reja),
+                   inset 0 -1px 0 0 var(--reja)}
+  #sudTab .cel.act{background:var(--celAct)}
+  #sudTab .cel.par{background:var(--celPar)}
+  #sudTab .cel.igual{background:var(--celIgual)}
+  #sudTab .cel.mal{color:var(--mal);background:var(--malBg)}
   .notas{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);
     grid-template-rows:repeat(3,1fr);pointer-events:none}
   .notas span{display:flex;align-items:center;justify-content:center;
@@ -237,6 +320,10 @@
   #reiTab .cel>*{pointer-events:none}
   #reiTab .cel svg{color:#0A0A0B;opacity:.92}
   #reiTab .cel.mal{box-shadow:inset 0 0 0 3px var(--mal)}
+  /* fila, columna o color que ya tienen su corona: se apagan, como en el
+     de LinkedIn, para que quede a la vista lo que falta */
+  #reiTab .cel.resuelta::before{content:'';position:absolute;inset:0;
+    background:var(--bg);opacity:.5;pointer-events:none}
   #reiTab .cel.mal svg{color:#0A0A0B}
   .marca{width:38%;height:38%;opacity:.6}
 
@@ -244,25 +331,25 @@
   #slWrap{position:relative}
   #slTab{touch-action:none}
   #slTab .cel>*{pointer-events:none}
-  #slTab .cel{background:#0C0C0E;box-shadow:inset 0 0 0 .5px rgba(242,240,236,.09)}
-  #slTab .cel.fija{background:#131315}
+  #slTab .cel{background:var(--cel);box-shadow:inset 0 0 0 .5px var(--celLinea)}
+
   #slTab .cel svg{color:var(--ink)}
   #slTab .cel.fija svg{color:var(--mut)}
   .signo{position:absolute;display:flex;align-items:center;justify-content:center;
     width:23px;height:23px;margin:-11.5px 0 0 -11.5px;border-radius:50%;
-    background:#0A0A0B;border:1px solid rgba(242,240,236,.4);
+    background:var(--bg);border:1px solid var(--borde);
     color:var(--ink);pointer-events:none;z-index:4;
-    box-shadow:0 0 0 3px #0A0A0B}
+    box-shadow:0 0 0 3px var(--bg)}
   .signo svg{width:13px;height:13px;display:block}
-  #slTab .cel.fija{background:#1E1E22;
-    box-shadow:inset 0 0 0 .5px rgba(242,240,236,.09)}
+  #slTab .cel.fija{background:var(--celFija);
+    box-shadow:inset 0 0 0 .5px var(--celLinea)}
   #slTab .cel.fija svg{color:var(--mut);opacity:.95}
-  #slTab .cel.hecha{background:#111317}
-  #slTab .cel.fija.hecha{background:#212127}
+  #slTab .cel.hecha{background:var(--celHecha)}
+  #slTab .cel.fija.hecha{background:var(--celFijaHecha)}
 
   /* --- bloques --- */
-  #labCv{display:block;border:1px solid rgba(242,240,236,.18);touch-action:none}
-  #blqCv{display:block;image-rendering:auto;border:1px solid rgba(242,240,236,.22)}
+  #labCv{display:block;border:1px solid var(--line);touch-action:none}
+  #blqCv{display:block;image-rendering:auto;border:1px solid var(--borde)}
   .tecl{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;width:100%;max-width:400px}
   .tecl .btn{padding:0;letter-spacing:0;text-indent:0;font-size:19px;font-weight:400;
     min-width:0;min-height:clamp(44px,6.4vh,56px)}
@@ -274,26 +361,31 @@
   .cruz button{background:none;border:1px solid var(--line);color:var(--mut);cursor:pointer;
     font-size:19px;line-height:1;touch-action:none;
     transition:color .18s,border-color .18s,background .18s}
-  .cruz button:active,.cruz button.on{color:#0A0A0B;background:var(--ink);border-color:var(--ink)}
-  @media (hover:hover) and (pointer:fine){.cruz button:hover{color:var(--ink);border-color:rgba(242,240,236,.34)}}
+  .cruz button:active,.cruz button.on{color:var(--sobre);background:var(--ink);border-color:var(--ink)}
+  @media (hover:hover) and (pointer:fine){.cruz button:hover{color:var(--ink);border-color:var(--reja)}}
   .cruz .ar{grid-area:1/2/2/3}
   .cruz .iz{grid-area:2/1/3/2}
   .cruz .de{grid-area:2/3/3/4}
   .cruz .ab{grid-area:3/2/4/3}
-  .filaInfo{display:flex;align-items:center;justify-content:center;gap:13px}
-  #blqNext{display:block;opacity:.85}
+  .filaInfo{display:flex;align-items:center;justify-content:center;gap:14px}
+  .caja{display:flex;flex-direction:column;align-items:center;gap:4px;
+    background:none;border:0;padding:0;cursor:pointer;color:inherit;font:inherit}
+  .caja span{font-size:7px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
+    color:var(--dim)}
+  .caja.gastada{opacity:.35}
+  #blqNext,#blqHold{display:block;opacity:.9}
   .pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:100%;max-width:340px}
   .pad.cinco{grid-template-columns:repeat(5,1fr);gap:7px;max-width:380px}
   .pad button{background:none;border:1px solid var(--line);color:var(--mut);cursor:pointer;
     height:clamp(52px,7.6vh,62px);font-size:18px;line-height:1;touch-action:none;
     transition:color .18s,border-color .18s,background .18s}
-  .pad button:active{color:#0A0A0B;background:var(--ink);border-color:var(--ink)}
-  @media (hover:hover) and (pointer:fine){.pad button:hover{color:var(--ink);border-color:rgba(242,240,236,.32)}}
+  .pad button:active{color:var(--sobre);background:var(--ink);border-color:var(--ink)}
+  @media (hover:hover) and (pointer:fine){.pad button:hover{color:var(--ink);border-color:var(--reja)}}
 
   /* ================= capas ================= */
   .capa{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;
     align-items:center;justify-content:center;gap:17px;padding:30px 26px;text-align:center;
-    background:rgba(10,10,11,.9);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+    background:var(--velo);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
   .capa.on{display:flex;animation:ap .4s ease both}
   @keyframes ap{from{opacity:0}to{opacity:1}}
   .capa h2{font-size:15px;font-weight:400;letter-spacing:.3em;text-indent:.3em;
@@ -343,7 +435,7 @@
 <!-- ===================== PORTADA ===================== -->
 <section class="view on" id="vHome">
   <header>
-    <span style="width:70px"></span>
+    <button class="ayuda" id="btnTema" aria-label="Cambiar entre claro y oscuro"></button>
     <span class="titulo"></span>
     <button class="reloj" id="relojHome" aria-label="Poner una alarma">
       <span class="pt"></span><span class="txt">Alarma</span>
@@ -373,10 +465,10 @@
 <!-- ===================== JUEGO ===================== -->
 <section class="view" id="vJuego">
   <header>
-    <button class="volver" id="btnVolver"><i>☰</i><span>Juegos</span></button>
+    <button class="btn chico volver" id="btnVolver"><i>←</i><span>Juegos</span></button>
     <div class="cab"><span class="titulo" id="tJuego"></span></div>
     <div class="der">
-      <button class="ayuda" id="btnReglas" aria-label="Cómo se juega">?</button>
+      <button class="btn chico" id="btnReglas">Reglas</button>
       <button class="reloj" id="relojJuego" aria-label="Poner una alarma">
         <span class="pt"></span><span class="txt">Alarma</span>
       </button>
@@ -390,7 +482,6 @@
   </div>
 
   <nav class="barra">
-    <div class="firma">Leonardo Pisani · Foto, video y streaming</div>
     <div class="barraLinks">
       <a href="https://leopisani.myportfolio.com" data-same="1">Portfolio</a>
       <span class="sep"></span>
@@ -452,7 +543,50 @@ document.querySelectorAll('.waLink').forEach(a => a.href = WA);
 /* ---------- memoria local, siempre con red ---------- */
 const mem = {
   get(k, d) { try { const v = localStorage.getItem('lp_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem('lp_' + k, JSON.stringify(v)); } catch (e) { } }
+  set(k, v) { try { localStorage.setItem('lp_' + k, JSON.stringify(v)); } catch (e) { } },
+  borrar(k) { try { localStorage.removeItem('lp_' + k); } catch (e) { } }
+};
+
+/* =========================================================================
+   TEMA
+   Tres estados: automático (sigue al teléfono), claro y oscuro. Lo que
+   elige la persona manda y queda guardado; en automático la página cambia
+   sola si el sistema cambia, incluso con la pestaña abierta.
+   ========================================================================= */
+const btnTema = document.getElementById('btnTema');
+const prefiereClaro = window.matchMedia ? matchMedia('(prefers-color-scheme: light)') : null;
+let modoTema = 'auto';
+
+function temaEfectivo() {
+  if (modoTema !== 'auto') return modoTema;
+  return (prefiereClaro && prefiereClaro.matches) ? 'claro' : 'oscuro';
+}
+function aplicarTema() {
+  const t = temaEfectivo();
+  const raiz = document.documentElement;
+  if (modoTema === 'auto') raiz.removeAttribute('data-tema');
+  else raiz.setAttribute('data-tema', modoTema);
+  PAL = PALETAS[t];
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', PAL.fondo);
+  if (btnTema) {
+    btnTema.innerHTML = modoTema === 'auto' ? SVG.isolluna : modoTema === 'claro' ? SVG.sol : SVG.luna;
+    btnTema.title = modoTema === 'auto' ? 'Sigue al teléfono' : modoTema === 'claro' ? 'Claro' : 'Oscuro';
+  }
+  if (typeof juegoActivo !== 'undefined' && juegoActivo && juegoActivo.remedir) juegoActivo.remedir();
+}
+if (prefiereClaro && prefiereClaro.addEventListener)
+  prefiereClaro.addEventListener('change', () => { if (modoTema === 'auto') aplicarTema(); });
+
+/* =========================================================================
+   PARTIDAS A MEDIO HACER
+   Si te llaman a la reunión en la mitad de un sudoku, al volver a escanear
+   seguís donde estabas. Se guarda en el teléfono, no sale de ahí.
+   ========================================================================= */
+const partida = {
+  leer(id) { return mem.get('part_' + id, null); },
+  poner(id, d) { mem.set('part_' + id, d); },
+  tirar(id) { mem.borrar('part_' + id); }
 };
 
 /* ---------- utilidades ---------- */
@@ -659,6 +793,143 @@ function reinasAfinar(reg, N, cols) {
   }
   return reinasSoluciones(reg, N, 2).length === 1;
 }
+/* =========================================================================
+   ¿CUÁNTO CUESTA ESTE TABLERO?
+   Lo resuelve como lo haría una persona, sin probar y descartar: busca
+   regiones, filas o columnas donde sólo quede un lugar posible. Si le
+   alcanza con eso, el tablero es fácil. Si además necesita razonar por
+   confinamiento —"esta región sólo puede estar en esta fila, así que el
+   resto de la fila queda descartado"—, es medio. Si ni con eso llega,
+   es difícil: hay que arriesgar.
+   ========================================================================= */
+function reinasGrado(reg, N) {
+  const pos = new Uint8Array(N * N).fill(1);
+  const fh = new Uint8Array(N), ch = new Uint8Array(N), gh = new Uint8Array(N);
+  let n = 0, avanzadas = 0, vueltas = 0;
+
+  const poner = (r, c) => {
+    const g = reg[r * N + c];
+    fh[r] = 1; ch[c] = 1; gh[g] = 1; n++;
+    for (let k = 0; k < N; k++) { pos[r * N + k] = 0; pos[k * N + c] = 0; }
+    for (let i = 0; i < N * N; i++) if (reg[i] === g) pos[i] = 0;
+    for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+      const rr = r + dr, cc = c + dc;
+      if (rr >= 0 && cc >= 0 && rr < N && cc < N) pos[rr * N + cc] = 0;
+    }
+  };
+
+  while (n < N && vueltas++ < N * 10) {
+    let avance = false;
+
+    /* --- lo básico: un único lugar posible --- */
+    for (let g = 0; g < N; g++) {
+      if (gh[g]) continue;
+      const cs = [];
+      for (let i = 0; i < N * N; i++) if (reg[i] === g && pos[i]) cs.push(i);
+      if (!cs.length) return null;
+      if (cs.length === 1) { poner((cs[0] / N) | 0, cs[0] % N); avance = true; }
+    }
+    if (avance) continue;
+    for (let r = 0; r < N; r++) {
+      if (fh[r]) continue;
+      const cs = [];
+      for (let c = 0; c < N; c++) if (pos[r * N + c]) cs.push(c);
+      if (!cs.length) return null;
+      if (cs.length === 1) { poner(r, cs[0]); avance = true; }
+    }
+    if (avance) continue;
+    for (let c = 0; c < N; c++) {
+      if (ch[c]) continue;
+      const rs = [];
+      for (let r = 0; r < N; r++) if (pos[r * N + c]) rs.push(r);
+      if (!rs.length) return null;
+      if (rs.length === 1) { poner(rs[0], c); avance = true; }
+    }
+    if (avance) continue;
+
+    /* --- La deducción fuerte, la que de verdad usa una persona: si TODAS
+       las ubicaciones posibles de una región (o de una fila, o de una
+       columna) matan la misma casilla, esa casilla queda descartada. De
+       acá salen tanto el confinamiento como las eliminaciones por
+       vecindad, sin tener que escribirlas por separado. --- */
+    const mata = q => {
+      const qr = (q / N) | 0, qc = q % N, qg = reg[q];
+      const e = new Uint8Array(N * N);
+      for (let k = 0; k < N; k++) { e[qr * N + k] = 1; e[k * N + qc] = 1; }
+      for (let i = 0; i < N * N; i++) if (reg[i] === qg) e[i] = 1;
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        const rr = qr + dr, cc = qc + dc;
+        if (rr >= 0 && cc >= 0 && rr < N && cc < N) e[rr * N + cc] = 1;
+      }
+      return e;
+    };
+    const podar = cands => {
+      if (cands.length < 2) return false;
+      const m = mata(cands[0]);
+      for (let k = 1; k < cands.length; k++) {
+        const e = mata(cands[k]);
+        for (let i = 0; i < N * N; i++) if (!e[i]) m[i] = 0;
+      }
+      const propias = new Set(cands);
+      let hubo = false;
+      for (let i = 0; i < N * N; i++)
+        if (m[i] && pos[i] && !propias.has(i)) { pos[i] = 0; hubo = true; }
+      return hubo;
+    };
+
+    for (let g = 0; g < N && !avance; g++) {
+      if (gh[g]) continue;
+      const cs = [];
+      for (let i = 0; i < N * N; i++) if (reg[i] === g && pos[i]) cs.push(i);
+      if (podar(cs)) avance = true;
+    }
+    for (let r = 0; r < N && !avance; r++) {
+      if (fh[r]) continue;
+      const cs = [];
+      for (let c = 0; c < N; c++) if (pos[r * N + c]) cs.push(r * N + c);
+      if (podar(cs)) avance = true;
+    }
+    for (let c = 0; c < N && !avance; c++) {
+      if (ch[c]) continue;
+      const cs = [];
+      for (let r = 0; r < N; r++) if (pos[r * N + c]) cs.push(r * N + c);
+      if (podar(cs)) avance = true;
+    }
+    if (avance) { avanzadas++; continue; }
+    return { grado: 'dificil', avanzadas, resuelto: false };
+  }
+  if (n < N) return { grado: 'dificil', avanzadas, resuelto: false };
+  return { avanzadas, resuelto: true };
+}
+
+/* Tamaño y exigencia de cada nivel. "pasos" es cuántas veces hay que
+   recurrir a la deducción fuerte: con pocos, el tablero se resuelve casi
+   de corrido; con muchos, hay que pensarlo. Los tres niveles exigen que
+   el tablero se pueda terminar SIN adivinar nunca. */
+const REINAS_NIVEL = {
+  facil: { N: 6, min: 0, pasos: 4 },
+  medio: { N: 7, min: 3, pasos: 9 },
+  dificil: { N: 8, min: 6, pasos: 99 }
+};
+
+function genReinasNivel(nivel) {
+  const cfg = REINAS_NIVEL[nivel] || REINAS_NIVEL.medio;
+  const hasta = Date.now() + 1500;
+  let sinAdivinar = null, cualquiera = null;
+  for (let k = 0; k < 400; k++) {
+    const p = genReinas(cfg.N);
+    if (!p) continue;
+    if (!cualquiera) cualquiera = p;
+    const g = reinasGrado(p.reg, cfg.N);
+    if (g && g.resuelto) {
+      if (g.avanzadas >= cfg.min && g.avanzadas <= cfg.pasos) { p.pasos = g.avanzadas; return p; }
+      if (!sinAdivinar) { sinAdivinar = p; sinAdivinar.pasos = g.avanzadas; }
+    }
+    if (Date.now() > hasta) break;
+  }
+  return sinAdivinar || cualquiera;
+}
+
 function genReinas(N) {
   const minB = N >= 7 ? 3 : 2, maxB = N * 2;
   let reserva = null;
@@ -784,6 +1055,50 @@ const SVG = {
   isolluna: '<svg viewBox="0 0 38 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"><circle cx="9" cy="12" r="4"/><path d="M9 4.2v1.6M9 18.2v1.6M1.2 12h1.6M15.2 12h1.6M3.5 6.5l1.1 1.1M13.4 16.4l1.1 1.1M14.5 6.5l-1.1 1.1M4.6 16.4l-1.1 1.1"/><path d="M34 15.6A7 7 0 0 1 25.6 7.2 7 7 0 1 0 34 15.6z"/></svg>'
 };
 
+/* =========================================================================
+   PALETAS DE LIENZO
+   Lo que se dibuja en canvas no entiende de variables CSS, así que cada
+   tema trae su juego de colores. No es el mismo dibujo invertido: los
+   contrastes del claro están calculados aparte.
+   ========================================================================= */
+const PALETAS = {
+  oscuro: {
+    mezcla: 'lighter',
+    fondo: '#0A0A0B',
+    orbes: ['255,232,205', '214,226,255', '255,214,178', '238,238,238'],
+    alfas: [.085, .062, .055, .040],
+    barrido: 'rgba(255,246,232,.028)',
+    base: '10,10,11', baseAlfa: .52,
+    lienzo: '#0C0C0E', reja: 'rgba(242,240,236,.045)',
+    fantasma: 'rgba(242,240,236,.22)', sombra: 'rgba(10,10,11,.22)',
+    piezas: ['#F2F0EC', '#CFCCC6', '#AFABA3', '#908C84', '#D9D5CE', '#A09C94', '#BEBAB2'],
+    labFondo: '#08080A', pared: '#191920', paredLinea: 'rgba(242,240,236,.3)',
+    punto: 'rgba(242,240,236,.6)', destello: 'rgba(242,240,236,.9)',
+    diafragma: '#F2F0EC', hoja: 'rgba(10,10,11,.22)',
+    drones: ['#A8705E', '#4E6E80', '#6E8C5A'], droneMiedo: '#3A3A42',
+    droneBorde: 'rgba(10,10,11,.5)', droneBordeMiedo: '#5A5750',
+    lente: '#0A0A0B', lenteMiedo: '#9A968E', brillo: 'rgba(242,240,236,.75)'
+  },
+  claro: {
+    mezcla: 'multiply',
+    fondo: '#F4F2ED',
+    orbes: ['196,172,140', '150,165,190', '200,170,145', '170,166,158'],
+    alfas: [.10, .085, .07, .05],
+    barrido: 'rgba(120,105,80,.03)',
+    base: '150,142,126', baseAlfa: .18,
+    lienzo: '#FBFAF7', reja: 'rgba(26,25,22,.07)',
+    fantasma: 'rgba(26,25,22,.26)', sombra: 'rgba(26,25,22,.18)',
+    piezas: ['#3C3A34', '#6B6760', '#8C877D', '#5A564E', '#A49E92', '#7A756B', '#4D4A43'],
+    labFondo: '#FBFAF7', pared: '#E4E0D6', paredLinea: 'rgba(26,25,22,.34)',
+    punto: 'rgba(26,25,22,.5)', destello: 'rgba(26,25,22,.75)',
+    diafragma: '#2A2823', hoja: 'rgba(244,242,237,.3)',
+    drones: ['#9A5C47', '#3E6075', '#5B7A47'], droneMiedo: '#C9C4B8',
+    droneBorde: 'rgba(26,25,22,.35)', droneBordeMiedo: '#8C877D',
+    lente: '#F4F2ED', lenteMiedo: '#4A463F', brillo: 'rgba(26,25,22,.35)'
+  }
+};
+let PAL = PALETAS.oscuro;
+
 /* paleta sorda para las regiones de reinas: siete tonos de película,
    nada estridente, todos lo bastante claros para el trazo negro encima */
 const TONOS = ['#B9AE97', '#4E6E80', '#A8705E', '#6E8C5A', '#8C6E96', '#D8CFBB', '#3F5F57', '#C09A52', '#6A6F8C'];
@@ -807,6 +1122,12 @@ function textoReloj() {
   }
 }
 function sonarAviso() {
+  try {
+    if ('Notification' in window && Notification.permission === 'granted')
+      new Notification('Se te hace la hora', {
+        body: 'Era el aviso que pediste.', tag: 'lp-alarma', renotify: true
+      });
+  } catch (e) { }
   vibra([180, 90, 180, 90, 260]);
   pip(740, 0, .35, .12); pip(880, .3, .35, .12); pip(1050, .62, .55, .13);
   document.getElementById('avisoT').textContent = 'Se te hace la hora';
@@ -827,6 +1148,12 @@ const opcReloj = document.getElementById('opcReloj');
   const b = el('button', 'btn', m + ' min');
   b.onclick = () => {
     audio();
+    /* el permiso se pide acá, cuando la persona pone la alarma, y no al
+       entrar: pedirlo de arranque es la forma más rápida de que te lo
+       nieguen para siempre */
+    try {
+      if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
+    } catch (e) { }
     finAviso = Date.now() + m * 60000;
     mem.set('aviso', finAviso);
     textoReloj(); cerrarCapas(); vibra(12);
@@ -891,7 +1218,7 @@ const JUEGOS = [
   },
   {
     id: 'sudoku', nombre: 'Sudoku', icono: SVG.isudoku, abrir: abrirSudoku,
-    regla: 'Del 1 al 9, sin repetir en la fila, la columna ni el cuadro.',
+    regla: 'Del 1 al 9 sin repetir en fila, columna y cuadro.',
     pasos: [
       'Completá la grilla para que <b>cada fila, cada columna y cada cuadro de 3×3</b> tengan los números del 1 al 9, sin repetir ninguno.',
       'Tocá una casilla vacía y después el número. La tecla <b>⌫</b> borra lo que pusiste.',
@@ -902,7 +1229,7 @@ const JUEGOS = [
   },
   {
     id: 'solluna', nombre: 'Sol y luna', icono: SVG.isolluna, abrir: abrirSolLuna,
-    regla: 'Mitad soles y mitad lunas, sin tres iguales seguidos.',
+    regla: 'Mitad soles, mitad lunas. Nunca tres seguidos.',
     pasos: [
       'Cada casilla lleva un ' + sim('sol') + ' o una ' + sim('luna') + '. Tocala para ir cambiando.',
       'No puede haber <b>más de dos iguales seguidos</b>, ni en horizontal ni en vertical. Dos van; tres, no.',
@@ -915,9 +1242,9 @@ const JUEGOS = [
     id: 'laberinto', nombre: 'Laberinto', icono: SVG.ilaberinto, abrir: abrirLaberinto,
     regla: 'Levantá todos los fotogramas sin que te alcancen.',
     pasos: [
-      'Sos el <b>diafragma</b> blanco. Tenés que levantar <b>todos los fotogramas</b> del laberinto.',
-      'Movete con <b>la cruz</b> de abajo, o <b>deslizando el dedo</b> sobre el tablero hacia donde quieras ir.',
-      'Las <b>cámaras</b> te persiguen. Si una te alcanza perdés una vida: tenés tres.',
+      'Sos el <b>diafragma</b>. Tenés que levantar <b>todos los fotogramas</b> del laberinto. Los costados dan la vuelta: salís por un lado y entrás por el otro.',
+      'Apoyá el dedo <b>en cualquier parte del tablero</b> y arrastrá hacia donde quieras ir: ahí nace una palanca. Soltás y desaparece.',
+      'Las <b>cámaras</b> salen del corral del medio, de a una. Cada una te busca distinto: una va derecho encima, otra se te adelanta, otra te cruza y la última se achica cuando está cerca.',
       'El <b>destello</b> de las esquinas las da vuelta. Por unos segundos las cazás vos, y cada una suma.',
       'Cuando no queda ningún fotograma, el laberinto se rehace de cero y las cámaras van más rápido.'
     ]
@@ -958,8 +1285,8 @@ function abrirJuego(j) {
 /* espacio real que le queda al tablero, descontando mandos y márgenes */
 function espacioLibre(extra) {
   return {
-    w: Math.max(150, areaJuego.clientWidth - 40),
-    h: Math.max(150, areaJuego.clientHeight - ctrlJuego.offsetHeight - (extra == null ? 56 : extra))
+    w: Math.max(150, areaJuego.clientWidth - 28),
+    h: Math.max(150, areaJuego.clientHeight - ctrlJuego.offsetHeight - (extra == null ? 44 : extra))
   };
 }
 
@@ -998,17 +1325,23 @@ const PIEZAS = [
   [[2, 0], [0, 1], [1, 1], [2, 1]]
 ];
 /* cada pieza con su propio gris: monocromo pero legible */
-const GRIS = ['#F2F0EC', '#CFCCC6', '#AFABA3', '#908C84', '#D9D5CE', '#A09C94', '#BEBAB2'];
+
 
 function abrirBloques() {
   const COL = 10, FIL = 20;
   const cv = el('canvas'); cv.id = 'blqCv';
   areaJuego.appendChild(cv);
   const barraInfo = el('div', 'filaInfo');
-  const cvN = el('canvas'); cvN.id = 'blqNext';
+  const cajaR = el('button', 'caja');
+  const cvR = el('canvas'); cvR.id = 'blqHold';
+  cajaR.append(cvR, el('span', null, 'Reserva'));
   const info = el('div', 'dato');
-  barraInfo.append(cvN, info);
+  const cajaN = el('div', 'caja');
+  const cvN = el('canvas'); cvN.id = 'blqNext';
+  cajaN.append(cvN, el('span', null, 'Sigue'));
+  barraInfo.append(cajaR, info, cajaN);
   areaJuego.appendChild(barraInfo);
+  mando(cajaR, () => { if (!fin) { guardarPieza(); pintar(); } });
 
   const pad = el('div', 'pad cinco');
   [['←', () => izq(), 110], ['↻', () => girar(), 0], ['→', () => der(), 110],
@@ -1022,8 +1355,8 @@ function abrirBloques() {
   const cx = cv.getContext('2d');
   let CEL = 16;
   function medir() {
-    const { w, h } = espacioLibre(76);
-    CEL = Math.max(8, Math.floor(Math.min(h / FIL, w / COL, 30)));
+    const { w, h } = espacioLibre(60);
+    CEL = Math.max(8, Math.floor(Math.min(h / FIL, w / COL, 36)));
     const d = Math.min(2, devicePixelRatio || 1);
     cv.width = COL * CEL * d; cv.height = FIL * CEL * d;
     cv.style.width = COL * CEL + 'px'; cv.style.height = FIL * CEL + 'px';
@@ -1032,32 +1365,49 @@ function abrirBloques() {
 
   const tab = new Int8Array(COL * FIL);
   let pieza = null, px = 0, py = 0, tipo = 0, proximo = Math.floor(Math.random() * 7);
+  let reserva = -1, yaCambie = false;
   let puntos = 0, lineas = 0, nivel = 1, fin = false;
   let mejor = mem.get('blqMejor', 0);
   let caida = 0, lapso = 820, ultimo = performance.now(), raf = 0;
 
-  function nueva() {
-    tipo = proximo;
-    proximo = Math.floor(Math.random() * 7);
+  function nueva(forzado) {
+    tipo = (forzado == null) ? proximo : forzado;
+    if (forzado == null) proximo = Math.floor(Math.random() * 7);
     pieza = PIEZAS[tipo].map(c => c.slice());
     px = 3; py = -1;
     pintarProximo();
     if (choca(pieza, px, py)) { terminar(); }
   }
 
-  /* la próxima pieza, chiquita al lado del tanteo */
-  const cxN = cvN.getContext('2d');
-  function pintarProximo() {
+  /* reserva: guardás la pieza que cae y seguís con otra. Una vez por
+     pieza, para que no sea un cambio infinito. */
+  function guardarPieza() {
+    if (yaCambie || !pieza) return;
+    yaCambie = true;
+    if (reserva < 0) { reserva = tipo; nueva(); }
+    else { const t = reserva; reserva = tipo; nueva(t); }
+    vibra(9);
+  }
+
+  /* las dos piezas chiquitas: la guardada y la que sigue */
+  const cxN = cvN.getContext('2d'), cxR = cvR.getContext('2d');
+  function miniatura(cv, cx2, t) {
     const d = Math.min(2, devicePixelRatio || 1), u = 9;
-    cvN.width = 4 * u * d; cvN.height = 2 * u * d;
-    cvN.style.width = 4 * u + 'px'; cvN.style.height = 2 * u + 'px';
-    cxN.setTransform(d, 0, 0, d, 0, 0);
-    cxN.clearRect(0, 0, 4 * u, 2 * u);
-    const cs = PIEZAS[proximo];
+    cv.width = 4 * u * d; cv.height = 2 * u * d;
+    cv.style.width = 4 * u + 'px'; cv.style.height = 2 * u + 'px';
+    cx2.setTransform(d, 0, 0, d, 0, 0);
+    cx2.clearRect(0, 0, 4 * u, 2 * u);
+    if (t < 0) return;
+    const cs = PIEZAS[t];
     const mnx = Math.min(...cs.map(c => c[0])), mxx = Math.max(...cs.map(c => c[0]));
     const off = (4 - (mxx - mnx + 1)) / 2 - mnx;
-    cxN.fillStyle = GRIS[proximo];
-    for (const [a, b] of cs) cxN.fillRect((a + off) * u + .6, b * u + .6, u - 1.2, u - 1.2);
+    cx2.fillStyle = PAL.piezas[t];
+    for (const [a, b] of cs) cx2.fillRect((a + off) * u + .6, b * u + .6, u - 1.2, u - 1.2);
+  }
+  function pintarProximo() {
+    miniatura(cvN, cxN, proximo);
+    miniatura(cvR, cxR, reserva);
+    cajaR.classList.toggle('gastada', yaCambie);
   }
   function choca(p, x, y) {
     for (const [a, b] of p) {
@@ -1082,6 +1432,8 @@ function abrirBloques() {
       for (let c = 0; c < COL; c++) tab[c] = 0;
       hechas++; r++;
     }
+    yaCambie = false;
+    if (!fin) partida.poner('bloques', { tab: Array.from(tab), puntos, lineas, nivel, reserva });
     if (hechas) {
       lineas += hechas;
       puntos += [0, 100, 300, 600, 1000][hechas] * nivel;
@@ -1124,25 +1476,25 @@ function abrirBloques() {
     const x = c * CEL, y = r * CEL;
     cx.fillStyle = color;
     cx.fillRect(x + 1, y + 1, CEL - 2, CEL - 2);
-    cx.fillStyle = 'rgba(10,10,11,.22)';
+    cx.fillStyle = PAL.sombra;
     cx.fillRect(x + 1, y + CEL - 4, CEL - 2, 3);
   }
   function pintar() {
-    cx.fillStyle = '#0C0C0E'; cx.fillRect(0, 0, COL * CEL, FIL * CEL);
-    cx.strokeStyle = 'rgba(242,240,236,.045)'; cx.lineWidth = 1;
+    cx.fillStyle = PAL.lienzo; cx.fillRect(0, 0, COL * CEL, FIL * CEL);
+    cx.strokeStyle = PAL.reja; cx.lineWidth = 1;
     for (let c = 1; c < COL; c++) { cx.beginPath(); cx.moveTo(c * CEL + .5, 0); cx.lineTo(c * CEL + .5, FIL * CEL); cx.stroke(); }
     for (let r = 1; r < FIL; r++) { cx.beginPath(); cx.moveTo(0, r * CEL + .5); cx.lineTo(COL * CEL, r * CEL + .5); cx.stroke(); }
     for (let r = 0; r < FIL; r++) for (let c = 0; c < COL; c++) {
-      const v = tab[r * COL + c]; if (v) bloque(c, r, GRIS[v - 1]);
+      const v = tab[r * COL + c]; if (v) bloque(c, r, PAL.piezas[v - 1]);
     }
     if (pieza && !fin) {
       const sy = sombra();
-      cx.strokeStyle = 'rgba(242,240,236,.22)'; cx.lineWidth = 1;
+      cx.strokeStyle = PAL.fantasma; cx.lineWidth = 1;
       for (const [a, b] of pieza) {
         if (sy + b < 0) continue;
         cx.strokeRect((px + a) * CEL + 1.5, (sy + b) * CEL + 1.5, CEL - 3, CEL - 3);
       }
-      for (const [a, b] of pieza) if (py + b >= 0) bloque(px + a, py + b, GRIS[tipo]);
+      for (const [a, b] of pieza) if (py + b >= 0) bloque(px + a, py + b, PAL.piezas[tipo]);
     }
     info.innerHTML = '<b>' + puntos + '</b> &nbsp;·&nbsp; ' + lineas + ' líneas &nbsp;·&nbsp; nivel ' + nivel +
       (mejor ? ' &nbsp;·&nbsp; récord ' + mejor : '');
@@ -1150,14 +1502,25 @@ function abrirBloques() {
   function terminar() {
     if (fin) return;
     fin = true; cancelAnimationFrame(raf);
+    partida.tirar('bloques');
     if (puntos > mejor) { mejor = puntos; mem.set('blqMejor', mejor); }
     vibra([50, 60, 50]);
     mostrarFin('Hasta acá', String(puntos),
       lineas + (lineas === 1 ? ' línea' : ' líneas') + ' en nivel ' + nivel + '. Récord: ' + mejor + '.',
-      reiniciar);
+      () => reiniciar(true));
   }
-  function reiniciar() {
+  function reiniciar(nuevo) {
+    const g = nuevo ? null : partida.leer('bloques');
     tab.fill(0); puntos = 0; lineas = 0; nivel = 1; lapso = 820; fin = false;
+    reserva = -1; yaCambie = false;
+    if (g) {
+      /* vuelve la pila y el tanteo; la pieza arranca de cero, que es más
+         justo que retomarla a mitad de caída */
+      for (let i = 0; i < COL * FIL; i++) tab[i] = g.tab[i] || 0;
+      puntos = g.puntos; lineas = g.lineas; nivel = g.nivel;
+      reserva = g.reserva == null ? -1 : g.reserva;
+      lapso = Math.max(130, 820 - (nivel - 1) * 72);
+    } else partida.tirar('bloques');
     proximo = Math.floor(Math.random() * 7);
     nueva(); ultimo = performance.now(); caida = 0;
     raf = requestAnimationFrame(bucle); pintar();
@@ -1189,7 +1552,9 @@ function abrirBloques() {
     const k = e.key;
     if (k === 'ArrowLeft') izq(); else if (k === 'ArrowRight') der();
     else if (k === 'ArrowUp') girar(); else if (k === 'ArrowDown') suave();
-    else if (k === ' ') { e.preventDefault(); bajar(); } else return;
+    else if (k === ' ') { e.preventDefault(); bajar(); }
+    else if (k === 'c' || k === 'C' || k === 'Shift') guardarPieza();
+    else return;
     pintar();
   };
   addEventListener('keydown', teclas);
@@ -1227,7 +1592,9 @@ function colorearRegiones(reg, N) {
 }
 
 function abrirReinas() {
-  let N = mem.get('reiN', 8);
+  let nivel = mem.get('reiNivel', 'facil');
+  if (!REINAS_NIVEL[nivel]) nivel = 'facil';
+  let N = REINAS_NIVEL[nivel].N;
   let p = null, estado = null, celdas = [], listo = false;
   const tab = el('div', 'tab'); tab.id = 'reiTab';
   const aviso = el('div', 'dato');
@@ -1242,10 +1609,10 @@ function abrirReinas() {
   fila.append(bDeshacer, bPista, bLimpiar, bNuevo);
   const filaN = el('div', 'fila');
   const seg = el('div', 'seg');
-  [7, 8, 9].forEach(n => {
-    const b = el('button', 'btn', n + '×' + n);
-    mando(b, () => { N = n; mem.set('reiN', n); armar(); });
-    b.dataset.n = n; seg.appendChild(b);
+  [['facil', 'Fácil'], ['medio', 'Medio'], ['dificil', 'Difícil']].forEach(([k, t]) => {
+    const b = el('button', 'btn', t);
+    mando(b, () => { nivel = k; mem.set('reiNivel', k); armar(true); });
+    b.dataset.k = k; seg.appendChild(b);
   });
   filaN.appendChild(seg);
   ctrlJuego.append(filaN, fila);
@@ -1254,18 +1621,23 @@ function abrirReinas() {
 
   function medirTab() {
     const { w, h } = espacioLibre();
-    const lado = Math.floor(Math.min(w, h, 430));
+    const lado = Math.floor(Math.min(w, h, 500));
     tab.style.width = tab.style.height = lado + 'px';
   }
 
-  function armar() {
-    [...seg.children].forEach(b => b.classList.toggle('sel', +b.dataset.n === N));
-    aviso.textContent = 'Armando tablero…';
+  function armar(nuevo) {
+    const g = nuevo ? null : partida.leer('reinas');
+    if (g && REINAS_NIVEL[g.nivel]) nivel = g.nivel;
+    [...seg.children].forEach(b => b.classList.toggle('sel', b.dataset.k === nivel));
+    N = REINAS_NIVEL[nivel].N;
+    aviso.textContent = g ? 'Retomando…' : 'Armando tablero…';
     tab.innerHTML = ''; listo = false;
     setTimeout(() => {
-      p = genReinas(N);
+      if (g) p = { N: g.N, reg: g.reg, sol: g.sol };
+      else { partida.tirar('reinas'); p = genReinasNivel(nivel); }
+      N = p ? p.N : N;
       if (!p) { aviso.textContent = 'No salió, probá de nuevo.'; return; }
-      estado = new Int8Array(N * N);           // 0 vacío · 1 marca · 2 reina
+      estado = Int8Array.from(g ? g.estado : new Array(N * N).fill(0));  // 0 vacío · 1 marca · 2 reina
       historia = [];
       const color = colorearRegiones(p.reg, N);
       tab.style.gridTemplateColumns = 'repeat(' + N + ',1fr)';
@@ -1363,26 +1735,38 @@ function abrirReinas() {
   function pintar() {
     const { reinas, malas } = conflictos();
     bDeshacer.disabled = !historia.length;
-    [...seg.children].forEach(b => b.classList.toggle('sel', +b.dataset.n === N));
+    const fh = new Uint8Array(N), ch = new Uint8Array(N), gh = new Uint8Array(N);
+    for (const i of reinas) {
+      if (malas.has(i)) continue;
+      fh[(i / N) | 0] = 1; ch[i % N] = 1; gh[p.reg[i]] = 1;
+    }
+    [...seg.children].forEach(b => b.classList.toggle('sel', b.dataset.k === nivel));
     for (let i = 0; i < N * N; i++) {
       const c = celdas[i];
       c.classList.toggle('mal', malas.has(i));
       const v = estado[i];
+      c.classList.toggle('resuelta', v !== 2 &&
+        (fh[(i / N) | 0] || ch[i % N] || gh[p.reg[i]]));
       c.innerHTML = v === 2 ? SVG.corona : v === 1 ? '<div class="marca">' + SVG.equis + '</div>' : '';
     }
     if (reinas.length === N && malas.size === 0) {
       aviso.textContent = '';
       listo = false;
+      partida.tirar('reinas');
       setTimeout(() => mostrarFin('Resuelto', '',
-        'Una reina por fila, por columna y por color, sin tocarse. Limpio.', armar), 260);
+        'Una reina por fila, por columna y por color, sin tocarse. Limpio.',
+        () => armar(true)), 260);
     } else {
       aviso.innerHTML = '<b>' + reinas.length + '</b> de ' + N + ' reinas' +
         (malas.size ? ' · hay choques' : '');
+      if (listo) partida.poner('reinas', {
+        nivel, N, reg: p.reg, sol: p.sol, estado: Array.from(estado)
+      });
     }
   }
 
   mando(bLimpiar, () => { if (!listo) return; guardar(); estado.fill(0); pintar(); });
-  mando(bNuevo, armar);
+  mando(bNuevo, () => armar(true));
   mando(bDeshacer, () => {
     if (!listo || !historia.length) return;
     estado = historia.pop(); pintar();
@@ -1433,17 +1817,31 @@ function abrirSudoku() {
   const filaAcc = el('div', 'fila');
   const bDeshacer = el('button', 'btn', 'Deshacer');
   const bNota = el('button', 'btn', 'Notas');
+  const bPista = el('button', 'btn', 'Pista');
   const bNuevo = el('button', 'btn', 'Otro');
   const bBajar = el('button', 'btn', 'Más fácil');
+  mando(bPista, () => {
+    if (!listo) return;
+    /* destapa la casilla elegida; si no hay ninguna, una al azar */
+    let i = (sel >= 0 && !val[sel]) ? sel : -1;
+    if (i < 0) {
+      const vacias = [];
+      for (let k = 0; k < 81; k++) if (!val[k]) vacias.push(k);
+      if (!vacias.length) return;
+      i = vacias[Math.floor(Math.random() * vacias.length)];
+    }
+    guardar();
+    val[i] = p.sol[i]; notas[i].clear(); sel = i; vibra(12); pintar();
+  });
   mando(bNota, () => { modoNota = !modoNota; bNota.classList.toggle('sel', modoNota); });
-  mando(bNuevo, armar);
-  mando(bBajar, () => { if (nivel > 1) { nivel--; mem.set('sudNivel', nivel); armar(); } });
+  mando(bNuevo, () => armar(true));
+  mando(bBajar, () => { if (nivel > 1) { nivel--; mem.set('sudNivel', nivel); armar(true); } });
   mando(bDeshacer, () => {
     if (!listo || !historia.length) return;
     const h = historia.pop();
     val = h.val; notas = h.notas; pintar();
   });
-  filaAcc.append(bDeshacer, bNota, bNuevo, bBajar);
+  filaAcc.append(bDeshacer, bPista, bNota, bNuevo, bBajar);
   ctrlJuego.append(filaNum, filaAcc);
 
   let historia = [];
@@ -1454,18 +1852,27 @@ function abrirSudoku() {
 
   function medirTab() {
     const { w, h } = espacioLibre();
-    const lado = Math.floor(Math.min(w, h, 430));
+    const lado = Math.floor(Math.min(w, h, 500));
     tab.style.width = tab.style.height = lado + 'px';
   }
 
-  function armar() {
+  function armar(nuevo) {
+    const g = nuevo ? null : partida.leer('sudoku');
+    if (g) nivel = g.nivel;
     bBajar.style.display = nivel > 1 ? '' : 'none';
-    aviso.textContent = 'Armando tablero…';
+    aviso.textContent = g ? 'Retomando…' : 'Armando tablero…';
     tab.innerHTML = ''; listo = false; sel = -1;
     setTimeout(() => {
-      p = genSudoku(pistasDe(nivel));
-      val = p.grid.slice();
-      notas = Array.from({ length: 81 }, () => new Set());
+      if (g) {
+        p = { grid: g.grid, sol: g.sol };
+        val = g.val.slice();
+        notas = g.notas.map(a => new Set(a));
+      } else {
+        partida.tirar('sudoku');
+        p = genSudoku(pistasDe(nivel));
+        val = p.grid.slice();
+        notas = Array.from({ length: 81 }, () => new Set());
+      }
       historia = [];
       tab.innerHTML = ''; celdas = [];
       for (let i = 0; i < 81; i++) {
@@ -1540,11 +1947,18 @@ function abrirSudoku() {
     }
     if (!faltan && !mal.size) {
       listo = false;
+      partida.tirar('sudoku');
       setTimeout(() => mostrarFin('Nivel ' + nivel + ' resuelto', '',
         'Va el ' + (nivel + 1) + ', con una pista menos.',
-        () => { nivel++; mem.set('sudNivel', nivel); armar(); }), 260);
-    } else aviso.innerHTML = 'Nivel <b>' + nivel + '</b> &nbsp;·&nbsp; faltan ' + faltan +
-      (mal.size ? ' &nbsp;·&nbsp; hay repetidos' : '');
+        () => { nivel++; mem.set('sudNivel', nivel); armar(true); }), 260);
+    } else {
+      aviso.innerHTML = 'Nivel <b>' + nivel + '</b> &nbsp;·&nbsp; faltan ' + faltan +
+        (mal.size ? ' &nbsp;·&nbsp; hay repetidos' : '');
+      if (listo) partida.poner('sudoku', {
+        nivel, grid: p.grid, sol: p.sol, val: Array.from(val),
+        notas: notas.map(x => [...x])
+      });
+    }
   }
 
   const teclas = e => {
@@ -1584,15 +1998,15 @@ function abrirSolLuna() {
 
   const fila = el('div', 'fila');
   const bDeshacer = el('button', 'btn', 'Deshacer');
-  const bLimpiar = el('button', 'btn', 'Limpiar');
-  const bNuevo = el('button', 'btn', 'Otro tablero');
-  fila.append(bDeshacer, bLimpiar, bNuevo);
+  const bPista = el('button', 'btn', 'Pista');
+  const bNuevo = el('button', 'btn', 'Otro');
+  fila.append(bDeshacer, bPista, bNuevo);
   ctrlJuego.appendChild(fila);
   let historia = [];
 
   function medirTab() {
     const { w, h } = espacioLibre();
-    const lado = Math.floor(Math.min(w, h, 410));
+    const lado = Math.floor(Math.min(w, h, 470));
     tab.style.width = tab.style.height = lado + 'px';
     wrap.style.width = lado + 'px'; wrap.style.height = lado + 'px';
     colocarSignos(lado);
@@ -1612,14 +2026,16 @@ function abrirSolLuna() {
     }
   }
 
-  function armar() {
-    aviso.textContent = 'Armando tablero…';
+  function armar(nuevo) {
+    const g = nuevo ? null : partida.leer('solluna');
+    aviso.textContent = g ? 'Retomando…' : 'Armando tablero…';
     tab.innerHTML = ''; listo = false;
     wrap.querySelectorAll('.signo').forEach(s => s.remove());
     setTimeout(() => {
-      p = genSolLuna(N);
+      if (g) p = { N: g.N, dados: g.dados, signos: g.signos, sol: g.sol };
+      else { partida.tirar('solluna'); p = genSolLuna(N); }
       if (!p) { aviso.textContent = 'No salió, probá de nuevo.'; return; }
-      val = p.dados.slice(); historia = [];
+      val = (g ? g.val : p.dados).slice(); historia = [];
       tab.innerHTML = ''; celdas = [];
       for (let i = 0; i < N * N; i++) {
         const c = el('div', 'cel');
@@ -1741,12 +2157,25 @@ function abrirSolLuna() {
     }
     if (!faltan && !mal.size) {
       listo = false;
-      setTimeout(() => mostrarFin('Resuelto', '', 'Sol y luna, mitad y mitad, sin tres seguidos.', armar), 260);
-    } else aviso.innerHTML = 'Faltan <b>' + faltan + '</b>' + (mal.size ? ' · algo no cierra' : '');
+      partida.tirar('solluna');
+      setTimeout(() => mostrarFin('Resuelto', '',
+        'Sol y luna, mitad y mitad, sin tres seguidos.', () => armar(true)), 260);
+    } else {
+      aviso.innerHTML = 'Faltan <b>' + faltan + '</b>' + (mal.size ? ' · algo no cierra' : '');
+      if (listo) partida.poner('solluna', { N, dados: p.dados, signos: p.signos, sol: p.sol, val: val.slice() });
+    }
   }
 
-  mando(bLimpiar, () => { if (!listo) return; guardar(); val = p.dados.slice(); pintar(); });
-  mando(bNuevo, armar);
+  mando(bPista, () => {
+    if (!listo) return;
+    const vacias = [];
+    for (let i = 0; i < N * N; i++) if (!val[i]) vacias.push(i);
+    if (!vacias.length) return;
+    const i = vacias[Math.floor(Math.random() * vacias.length)];
+    guardar();
+    val[i] = p.sol[i]; vibra(12); pintar();
+  });
+  mando(bNuevo, () => armar(true));
   mando(bDeshacer, () => {
     if (!listo || !historia.length) return;
     val = historia.pop(); pintar();
@@ -1761,41 +2190,160 @@ function abrirSolLuna() {
 
 /* =========================================================================
    JUEGO 5 — LABERINTO
-   Un guiño al género de laberinto y persecución, con dibujo y trazado
-   propios: el que recorre es un diafragma que abre y cierra al avanzar,
-   los puntos son fotogramas y los que persiguen, drones con una lente.
-   ========================================================================= */
-const LAB_C = 15, LAB_R = 17;
+   Con la estructura del arcade clásico: mapa simétrico, corral en el medio
+   del que los drones salen de a uno, túneles a los costados que dan la
+   vuelta, y persecución con turnos de acecho y de dispersión.
 
-/* laberinto perfecto por excavación y después "trenzado": a los callejones
-   sin salida se les abre una pared, así siempre hay por dónde escapar */
+   El trazado y el dibujo son propios —el mapa del Pac-Man original es obra
+   protegida—, pero la gramática del género es la misma: el que recorre es
+   un diafragma que abre y cierra al avanzar, los puntos son fotogramas y
+   los que persiguen, cámaras con una lente.
+   ========================================================================= */
+const LAB_C = 15, LAB_R = 23;
+const LAB_FILA_TUNEL = 11;
+
+/* Excava media planta y la refleja: así el mapa sale simétrico como los de
+   salón. Después se le abre el corral, los túneles, y se le sacan los
+   callejones sin salida para que siempre haya por dónde escapar. */
 function genLaberinto(C, R) {
-  const m = new Uint8Array(C * R).fill(1);
   const ix = (x, y) => y * C + x;
-  const pila = [[1, 1]]; m[ix(1, 1)] = 0;
+  const m = new Uint8Array(C * R).fill(1);
+  const eje = (C - 1) / 2;                       // columna espejo
+  const colsCelda = [];
+  for (let x = 1; x <= eje; x += 2) colsCelda.push(x);
+  const filasCelda = [];
+  for (let y = 1; y < R - 1; y += 2) filasCelda.push(y);
+
+  /* excavación por retroceso sobre la media planta */
+  const dentro = (x, y) => colsCelda.indexOf(x) >= 0 && filasCelda.indexOf(y) >= 0;
+  const pila = [[colsCelda[0], filasCelda[0]]];
+  m[ix(colsCelda[0], filasCelda[0])] = 0;
   while (pila.length) {
     const [x, y] = pila[pila.length - 1];
     const vs = [];
     for (const [dx, dy] of [[2, 0], [-2, 0], [0, 2], [0, -2]]) {
       const nx = x + dx, ny = y + dy;
-      if (nx > 0 && ny > 0 && nx < C - 1 && ny < R - 1 && m[ix(nx, ny)] === 1) vs.push([nx, ny, dx, dy]);
+      if (dentro(nx, ny) && m[ix(nx, ny)] === 1) vs.push([nx, ny, dx, dy]);
     }
     if (!vs.length) { pila.pop(); continue; }
     const [nx, ny, dx, dy] = vs[Math.floor(Math.random() * vs.length)];
     m[ix(x + dx / 2, y + dy / 2)] = 0; m[ix(nx, ny)] = 0;
     pila.push([nx, ny]);
   }
-  for (let y = 1; y < R - 1; y += 2) for (let x = 1; x < C - 1; x += 2) {
+  /* trenzado: ningún callejón sin salida */
+  for (const y of filasCelda) for (const x of colsCelda) {
     const abiertos = [], cerrados = [];
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const wx = x + dx, wy = y + dy;
-      if (wx <= 0 || wy <= 0 || wx >= C - 1 || wy >= R - 1) continue;
+      if (wx <= 0 || wy <= 0 || wx > eje || wy >= R - 1) continue;
       (m[ix(wx, wy)] === 0 ? abiertos : cerrados).push([wx, wy]);
     }
-    if (abiertos.length <= 1 && cerrados.length)
-      { const [wx, wy] = cerrados[Math.floor(Math.random() * cerrados.length)]; m[ix(wx, wy)] = 0; }
+    if (abiertos.length <= 1 && cerrados.length) {
+      const [wx, wy] = cerrados[Math.floor(Math.random() * cerrados.length)];
+      m[ix(wx, wy)] = 0;
+    }
   }
-  return m;
+  /* unas cuantas aberturas más, para que el mapa esté bien comunicado */
+  for (let k = 0; k < filasCelda.length; k++) {
+    const y = filasCelda[Math.floor(Math.random() * filasCelda.length)];
+    const x = colsCelda[Math.floor(Math.random() * (colsCelda.length - 1))] + 1;
+    if (x > 0 && x < eje) m[ix(x, y)] = 0;
+  }
+
+  /* espejo */
+  for (let y = 0; y < R; y++) for (let x = 0; x < eje; x++) m[ix(C - 1 - x, y)] = m[ix(x, y)];
+  /* la columna del eje se abre donde haya paso a los lados */
+  for (const y of filasCelda) if (m[ix(eje - 1, y)] === 0) m[ix(eje, y)] = 0;
+
+  /* Ninguna fila de pared debería cortar el mapa de lado a lado con un
+     solo paso: eso lo parte en salones y arruina la persecución. */
+  for (let y = 2; y < R - 2; y += 2) {
+    if (y === LAB_FILA_TUNEL - 1 || y === LAB_FILA_TUNEL + 1) continue;
+    let pasos = 0;
+    for (let x = 1; x < C - 1; x++) if (m[ix(x, y)] === 0) pasos++;
+    for (let intento = 0; pasos < 3 && intento < 20; intento++) {
+      const x = 1 + 2 * Math.floor(Math.random() * ((C - 1) / 2));
+      if (x >= eje || m[ix(x, y)] === 0) continue;
+      m[ix(x, y)] = 0; m[ix(C - 1 - x, y)] = 0;
+      pasos += 2;
+    }
+  }
+
+  /* ---- corral en el centro ---- */
+  const cy = LAB_FILA_TUNEL, cx = eje;
+  for (let x = cx - 2; x <= cx + 2; x++) { m[ix(x, cy - 1)] = 1; m[ix(x, cy + 1)] = 1; }
+  m[ix(cx - 2, cy)] = 1; m[ix(cx + 2, cy)] = 1;
+  for (let x = cx - 1; x <= cx + 1; x++) m[ix(x, cy)] = 0;
+  m[ix(cx, cy - 1)] = 0;                               // la puerta
+  m[ix(cx, cy - 2)] = 0; m[ix(cx, cy - 3)] = 0;        // salida hacia arriba
+
+  /* ---- túneles: la fila del corral, abierta hasta los bordes ---- */
+  for (let x = 0; x <= cx - 3; x++) { m[ix(x, cy)] = 0; m[ix(C - 1 - x, cy)] = 0; }
+  /* y que esa fila tenga salida vertical en varios puntos */
+  for (let x = 1; x <= cx - 3; x += 2) {
+    if (m[ix(x, cy - 1)] === 1 && m[ix(x, cy + 1)] === 1) {
+      const arriba = Math.random() < .5;
+      m[ix(x, arriba ? cy - 1 : cy + 1)] = 0;
+      m[ix(C - 1 - x, arriba ? cy - 1 : cy + 1)] = 0;
+    }
+  }
+
+  /* ---- reparación final ----
+     Todo lo que se abra acá se abre también del otro lado: si no, las
+     reparaciones rompen la simetría que acabamos de construir. ---- */
+  const espejo = i => { const x = i % C, y = (i / C) | 0; return ix(C - 1 - x, y); };
+  const abrir = i => { m[i] = 0; m[espejo(i)] = 0; };
+  const vec = i => {
+    const x = i % C, y = (i / C) | 0, v = [];
+    if (y > 0) v.push(i - C);
+    if (y < R - 1) v.push(i + C);
+    v.push(y * C + (x + C - 1) % C);
+    v.push(y * C + (x + 1) % C);
+    return v;
+  };
+  const enCorral = i => {
+    const x = i % C, y = (i / C) | 0;
+    return Math.abs(x - cx) <= 1 && y === cy;
+  };
+  for (let pase = 0; pase < 6; pase++) {
+    let tocado = false;
+    for (let i = 0; i < C * R; i++) {
+      if (m[i] || enCorral(i)) continue;
+      const x = i % C, y = (i / C) | 0;
+      const abiertos = vec(i).filter(j => m[j] === 0);
+      if (abiertos.length > 1) continue;
+      const cand = vec(i).filter(j => {
+        const jx = j % C, jy = (j / C) | 0;
+        return m[j] === 1 && jx > 0 && jx < C - 1 && jy > 0 && jy < R - 1 && !enCorral(j);
+      });
+      if (cand.length) { abrir(cand[Math.floor(Math.random() * cand.length)]); tocado = true; }
+    }
+    if (!tocado) break;
+  }
+
+  /* ---- y que no quede ningún rincón incomunicado ---- */
+  for (let intento = 0; intento < 12; intento++) {
+    const inicio = ix(cx, cy);
+    const vis = new Uint8Array(C * R); const pila = [inicio]; vis[inicio] = 1;
+    let alcanzadas = 1, abiertas = 0;
+    while (pila.length) {
+      const i = pila.pop();
+      for (const j of vec(i)) if (!m[j] && !vis[j]) { vis[j] = 1; alcanzadas++; pila.push(j); }
+    }
+    for (let i = 0; i < C * R; i++) if (!m[i]) abiertas++;
+    if (alcanzadas === abiertas) break;
+    /* busca una pared que separe lo alcanzado de lo que no, y la abre */
+    let arreglo = false;
+    for (let i = 0; i < C * R && !arreglo; i++) {
+      const x = i % C, y = (i / C) | 0;
+      if (!m[i] || x === 0 || x === C - 1 || y === 0 || y === R - 1) continue;
+      let dentro = false, fuera = false;
+      for (const j of vec(i)) { if (m[j]) continue; if (vis[j]) dentro = true; else fuera = true; }
+      if (dentro && fuera) { abrir(i); arreglo = true; }
+    }
+    if (!arreglo) break;
+  }
+  return { m, puerta: [cx, cy - 1], corral: [cx, cy] };
 }
 
 function abrirLaberinto() {
@@ -1804,123 +2352,84 @@ function abrirLaberinto() {
   const info = el('div', 'dato');
   areaJuego.append(cv, info);
 
-  /* Cruz: con el teléfono apoyado, el pulgar busca una cruz, no una fila.
-     Se puede apoyar el dedo y deslizarlo entre los brazos sin levantarlo. */
-  const filaPausa = el('div', 'fila');
-  filaPausa.style.marginTop = '10px';
-  const bPausa = el('button', 'btn', 'Pausa');
-  bPausa.style.minHeight = '42px';
-  bPausa.style.padding = '0 26px';
-  filaPausa.appendChild(bPausa);
-  const pad = el('div', 'cruz');
-  [['ar', '↑', [0, -1]], ['iz', '←', [-1, 0]], ['de', '→', [1, 0]], ['ab', '↓', [0, 1]]]
-    .forEach(([cls, txt, d]) => {
-      const b = el('button', cls, txt);
-      b.dataset.d = d.join(',');
-      pad.appendChild(b);
-    });
-  ctrlJuego.append(pad, filaPausa);
+  const fila = el('div', 'fila');
+  const bPausa = el('button', 'btn chico', 'Pausa');
+  fila.appendChild(bPausa);
+  ctrlJuego.appendChild(fila);
 
-  let apretado = null;
-  const brazoEn = (x, y) => {
-    const e = document.elementFromPoint(x, y);
-    const b = e && e.closest ? e.closest('[data-d]') : null;
-    return b && b.parentNode === pad ? b : null;
-  };
-  const usar = b => {
-    if (!b || fin) return;
-    if (apretado && apretado !== b) apretado.classList.remove('on');
-    apretado = b; b.classList.add('on');
-    yo.pedida = b.dataset.d.split(',').map(Number);
-    vibra(5);
-  };
-  pad.addEventListener('pointerdown', e => {
-    e.preventDefault();
-    usar(brazoEn(e.clientX, e.clientY));
-    try { pad.setPointerCapture(e.pointerId); } catch (err) { }
-  });
-  pad.addEventListener('pointermove', e => {
-    if (!apretado) return;
-    const b = brazoEn(e.clientX, e.clientY);
-    if (b && b !== apretado) usar(b);
-  });
-  const soltarCruz = () => { if (apretado) apretado.classList.remove('on'); apretado = null; };
-  pad.addEventListener('pointerup', soltarCruz);
-  pad.addEventListener('pointercancel', soltarCruz);
-  pad.addEventListener('click', e => e.preventDefault());
-
-  let enPausa = false;
-  mando(bPausa, () => {
-    if (fin) return;
-    enPausa = !enPausa;
-    bPausa.textContent = enPausa ? 'Seguir' : 'Pausa';
-    bPausa.classList.toggle('sel', enPausa);
-    if (!enPausa) { ultimo = performance.now(); raf = requestAnimationFrame(bucle); }
-  });
-
-  const cx = cv.getContext('2d');
+  const cx2 = cv.getContext('2d');
   let CEL = 18;
   function medir() {
-    const { w, h } = espacioLibre(40);
-    CEL = Math.max(7, Math.floor(Math.min(h / R, w / C, 26)));
+    const { w, h } = espacioLibre(30);
+    CEL = Math.max(7, Math.floor(Math.min(h / R, w / C, 30)));
     const d = Math.min(2, devicePixelRatio || 1);
     cv.width = C * CEL * d; cv.height = R * CEL * d;
     cv.style.width = C * CEL + 'px'; cv.style.height = R * CEL + 'px';
-    cx.setTransform(d, 0, 0, d, 0, 0);
+    cx2.setTransform(d, 0, 0, d, 0, 0);
   }
 
-  let mapa = null, puntos = null, destellos = null;
+  let mapa = null, puerta = null, corral = null;
+  let puntos = null, destellos = null;
   let quedan = 0, tanteo = 0, vidas = 3, nivel = 1, fin = false;
   let asustados = 0, pausa = 0, raf = 0, ultimo = performance.now(), reloj = 0;
+  let enPausa = false, turno = 0, relojTurno = 0;
   let mejor = mem.get('labMejor', 0);
   const ix = (x, y) => y * C + x;
-  const libre = (x, y) => x >= 0 && y >= 0 && x < C && y < R && mapa[ix(x, y)] === 0;
+  const libre = (x, y) => y >= 0 && y < R && mapa[ix((x + C) % C, y)] === 0;
+  const env = x => (x + C) % C;                     // los túneles dan la vuelta
 
-  const MEDIO = [7, 9], SALIDA = [7, R - 2];
+  /* turnos de dispersión y acecho, como en los de salón */
+  const TURNOS = [7, 20, 7, 20, 5, 20, 5, 1e9];
+  const ESQUINAS = [[C - 2, 1], [1, 1], [C - 2, R - 2], [1, R - 2]];
+
   let yo = null, drones = [];
+  function bicho(x, y) { return { x, y, nx: x, ny: y, t: 0, dir: [0, 0], pedida: null }; }
 
-  function nuevoBicho(x, y, dir) {
-    return { x, y, nx: x, ny: y, t: 0, dir, pedida: null, casa: [x, y] };
-  }
   function colocar() {
-    yo = nuevoBicho(SALIDA[0], SALIDA[1], [0, 0]);
-    const cerca = [[0, 0], [-2, 0], [2, 0], [0, -2]]
-      .map(([a, b]) => [MEDIO[0] + a, MEDIO[1] + b])
-      .filter(([a, b]) => libre(a, b));
+    yo = bicho(corral[0], Math.min(R - 2, corral[1] + 5));
+    while (!libre(yo.x, yo.y) && yo.y > 1) yo.y--;
+    yo.nx = yo.x; yo.ny = yo.y;
     drones = [];
-    for (let k = 0; k < 3; k++) {
-      const [a, b] = cerca[k % cerca.length];
-      drones.push(nuevoBicho(a, b, [0, 0]));
+    for (let k = 0; k < 4; k++) {
+      const d = bicho(corral[0] + (k === 0 ? 0 : k - 2), corral[1]);
+      if (k === 0) { d.x = d.nx = puerta[0]; d.y = d.ny = puerta[1] - 1; d.estado = 'fuera'; }
+      else { d.estado = 'casa'; d.espera = (k - 1) * 3.2 + 1.5; }
+      d.perfil = k; d.ojos = false;
+      drones.push(d);
     }
+    turno = 0; relojTurno = 0;
   }
 
   function nivelNuevo() {
-    mapa = genLaberinto(C, R);
-    puntos = new Uint8Array(C * R);
-    destellos = new Uint8Array(C * R);
+    const g = genLaberinto(C, R);
+    mapa = g.m; puerta = g.puerta; corral = g.corral;
+    puntos = new Uint8Array(C * R); destellos = new Uint8Array(C * R);
     quedan = 0;
-    for (let y = 1; y < R - 1; y++) for (let x = 1; x < C - 1; x++) {
+    for (let y = 1; y < R - 1; y++) for (let x = 0; x < C; x++) {
       if (mapa[ix(x, y)]) continue;
-      if (Math.abs(x - MEDIO[0]) <= 1 && Math.abs(y - MEDIO[1]) <= 1) continue;
-      if (x === SALIDA[0] && y === SALIDA[1]) continue;
+      if (y === corral[1] && Math.abs(x - corral[0]) <= 1) continue;      // corral
+      if (x === puerta[0] && y === puerta[1]) continue;                   // puerta
+      if (y === corral[1] && (x < 2 || x > C - 3)) continue;              // boca del túnel
       puntos[ix(x, y)] = 1; quedan++;
     }
-    for (const [x, y] of [[1, 1], [C - 2, 1], [1, R - 2], [C - 2, R - 2]]) {
-      if (!libre(x, y)) continue;
-      destellos[ix(x, y)] = 1;
-      if (puntos[ix(x, y)]) { puntos[ix(x, y)] = 0; quedan--; }
+    const esquinas = [[1, 1], [C - 2, 1], [1, R - 2], [C - 2, R - 2]];
+    for (const [x, y] of esquinas) {
+      let yy = y;
+      while (yy > 0 && yy < R - 1 && mapa[ix(x, yy)]) yy += (y < R / 2 ? 1 : -1);
+      if (mapa[ix(x, yy)]) continue;
+      destellos[ix(x, yy)] = 1;
+      if (puntos[ix(x, yy)]) { puntos[ix(x, yy)] = 0; quedan--; }
     }
-    colocar(); asustados = 0; pausa = .9;
+    colocar(); asustados = 0; pausa = 1;
   }
 
-  /* --- movimiento: se avanza de casilla a casilla, se dobla en el centro --- */
+  /* ---------- movimiento sobre la cuadrícula ---------- */
   function mover(b, vel, dt, elegir) {
-    if (b.dir[0] === 0 && b.dir[1] === 0) {
+    if (!b.dir[0] && !b.dir[1]) {
       const d = elegir(b);
       if (!d) return;
-      b.dir = d; b.nx = b.x + d[0]; b.ny = b.y + d[1]; b.t = 0;
+      b.dir = d; b.nx = env(b.x + d[0]); b.ny = b.y + d[1]; b.t = 0;
     }
-    /* media vuelta en el acto */
     if (b.pedida && b.pedida[0] === -b.dir[0] && b.pedida[1] === -b.dir[1] && b.t > 0) {
       const ax = b.x, ay = b.y;
       b.x = b.nx; b.y = b.ny; b.nx = ax; b.ny = ay;
@@ -1931,122 +2440,174 @@ function abrirLaberinto() {
       b.t -= 1; b.x = b.nx; b.y = b.ny;
       const d = elegir(b);
       if (!d) { b.t = 0; b.dir = [0, 0]; b.nx = b.x; b.ny = b.y; return; }
-      b.dir = d; b.nx = b.x + d[0]; b.ny = b.y + d[1];
+      b.dir = d; b.nx = env(b.x + d[0]); b.ny = b.y + d[1];
     }
   }
-  const opciones = b => [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(d => libre(b.x + d[0], b.y + d[1]));
+  /* El corral es sólo para los drones que vuelven: ni el jugador ni un
+     dron entero pueden meterse ahí. */
+  const esCorral = (x, y) => {
+    const xx = env(x);
+    return (y === corral[1] && Math.abs(xx - corral[0]) <= 1) ||
+           (y === puerta[1] && xx === puerta[0]);
+  };
+  const paso = (b, d, puedeCorral) =>
+    libre(b.x + d[0], b.y + d[1]) && (puedeCorral || !esCorral(b.x + d[0], b.y + d[1]));
+  const salidas = (b, puedeCorral) =>
+    [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(d => paso(b, d, puedeCorral));
 
   function elegirYo(b) {
-    if (b.pedida && libre(b.x + b.pedida[0], b.y + b.pedida[1])) { const d = b.pedida; b.pedida = null; return d; }
-    if (libre(b.x + b.dir[0], b.y + b.dir[1]) && (b.dir[0] || b.dir[1])) return b.dir;
+    if (b.pedida && paso(b, b.pedida, false)) { const d = b.pedida; b.pedida = null; return d; }
+    if ((b.dir[0] || b.dir[1]) && paso(b, b.dir, false)) return b.dir;
     return null;
   }
-  function elegirDron(b) {
-    let op = opciones(b);
-    if (!op.length) return null;
-    const sinVolver = op.filter(d => !(d[0] === -b.dir[0] && d[1] === -b.dir[1]));
-    if (sinVolver.length) op = sinVolver;
-    if (Math.random() < .22) return op[Math.floor(Math.random() * op.length)];
-    const huir = asustados > 0;
-    let mejorD = null, mejorV = huir ? -1 : 1e9;
-    for (const d of op) {
-      const dx = b.x + d[0] - yo.x, dy = b.y + d[1] - yo.y;
-      const v = dx * dx + dy * dy;
-      if (huir ? v > mejorV : v < mejorV) { mejorV = v; mejorD = d; }
+
+  /* cada dron mira un punto distinto del tablero: uno va derecho encima,
+     otro se adelanta, otro cruza por el otro lado y el último se achica
+     cuando está cerca */
+  function objetivo(d) {
+    if (d.ojos) return puerta;
+    if (asustados > 0) return [Math.floor(Math.random() * C), Math.floor(Math.random() * R)];
+    if (TURNOS[turno] && turno % 2 === 0) return ESQUINAS[d.perfil];
+    const px2 = yo.x, py2 = yo.y, dx = yo.dir[0], dy = yo.dir[1];
+    if (d.perfil === 0) return [px2, py2];
+    if (d.perfil === 1) return [px2 + dx * 4, py2 + dy * 4];
+    if (d.perfil === 2) {
+      const a = drones[0];
+      return [px2 + dx * 2 + (px2 + dx * 2 - a.x), py2 + dy * 2 + (py2 + dy * 2 - a.y)];
     }
-    return mejorD || op[0];
+    const lejos = Math.hypot(d.x - px2, d.y - py2) > 7;
+    return lejos ? [px2, py2] : ESQUINAS[3];
   }
 
-  function px(b) { return { x: (b.x + (b.nx - b.x) * b.t + .5) * CEL, y: (b.y + (b.ny - b.y) * b.t + .5) * CEL }; }
+  function elegirDron(d) {
+    let op = salidas(d, d.ojos);
+    if (!op.length) return null;
+    const sinVolver = op.filter(k => !(k[0] === -d.dir[0] && k[1] === -d.dir[1]));
+    if (sinVolver.length) op = sinVolver;
+    const [tx, ty] = objetivo(d);
+    let mejorD = op[0], mejorV = Infinity;
+    for (const k of op) {
+      const ax = env(d.x + k[0]) - tx, ay = d.y + k[1] - ty;
+      const v = ax * ax + ay * ay;
+      if (v < mejorV) { mejorV = v; mejorD = k; }
+    }
+    return mejorD;
+  }
 
-  /* --- dibujo --- */
-  /* Las paredes se pintan como una sola masa y después se les dibuja el
-     contorno sólo donde dan al pasillo: así se leen como muros continuos
-     y no como una fila de piedritas. */
+  function px(b) {
+    let a = b.x, c = b.nx;
+    if (Math.abs(c - a) > 1) c = a + (c > a ? -1 : 1);   // no cruzar la pantalla al dar la vuelta
+    return { x: (a + (c - a) * b.t + .5) * CEL, y: (b.y + (b.ny - b.y) * b.t + .5) * CEL };
+  }
+
+  /* ---------- dibujo ---------- */
   function paredes() {
-    cx.fillStyle = '#191920';
+    cx2.fillStyle = PAL.pared;
     for (let y = 0; y < R; y++) for (let x = 0; x < C; x++)
-      if (mapa[ix(x, y)]) cx.fillRect(x * CEL, y * CEL, CEL, CEL);
-    cx.strokeStyle = 'rgba(242,240,236,.3)';
-    cx.lineWidth = 1.4; cx.lineCap = 'square';
-    cx.beginPath();
+      if (mapa[ix(x, y)]) cx2.fillRect(x * CEL, y * CEL, CEL, CEL);
+    cx2.strokeStyle = PAL.paredLinea;
+    cx2.lineWidth = 1.4; cx2.lineCap = 'square';
+    cx2.beginPath();
     for (let y = 0; y < R; y++) for (let x = 0; x < C; x++) {
       if (!mapa[ix(x, y)]) continue;
       const a = x * CEL, b = y * CEL;
       const hueco = (dx, dy) => {
         const nx = x + dx, ny = y + dy;
-        return nx >= 0 && ny >= 0 && nx < C && ny < R && mapa[ix(nx, ny)] === 0;
+        return ny >= 0 && ny < R && mapa[ix((nx + C) % C, ny)] === 0;
       };
-      if (hueco(0, -1)) { cx.moveTo(a, b + .7); cx.lineTo(a + CEL, b + .7); }
-      if (hueco(0, 1)) { cx.moveTo(a, b + CEL - .7); cx.lineTo(a + CEL, b + CEL - .7); }
-      if (hueco(-1, 0)) { cx.moveTo(a + .7, b); cx.lineTo(a + .7, b + CEL); }
-      if (hueco(1, 0)) { cx.moveTo(a + CEL - .7, b); cx.lineTo(a + CEL - .7, b + CEL); }
+      if (hueco(0, -1)) { cx2.moveTo(a, b + .7); cx2.lineTo(a + CEL, b + .7); }
+      if (hueco(0, 1)) { cx2.moveTo(a, b + CEL - .7); cx2.lineTo(a + CEL, b + CEL - .7); }
+      if (hueco(-1, 0)) { cx2.moveTo(a + .7, b); cx2.lineTo(a + .7, b + CEL); }
+      if (hueco(1, 0)) { cx2.moveTo(a + CEL - .7, b); cx2.lineTo(a + CEL - .7, b + CEL); }
     }
-    cx.stroke();
+    cx2.stroke();
+    /* la puerta del corral */
+    cx2.strokeStyle = PAL.punto; cx2.lineWidth = Math.max(2, CEL * .14);
+    cx2.beginPath();
+    cx2.moveTo(puerta[0] * CEL + CEL * .1, puerta[1] * CEL + CEL * .5);
+    cx2.lineTo(puerta[0] * CEL + CEL * .9, puerta[1] * CEL + CEL * .5);
+    cx2.stroke();
   }
   function diafragma(p, abierto, ang) {
     const r = CEL * .46;
-    cx.save(); cx.translate(p.x, p.y); cx.rotate(ang);
-    cx.fillStyle = '#F2F0EC';
-    cx.beginPath();
-    const boca = abierto * .8;                       // apertura de la "boca"
+    cx2.save(); cx2.translate(p.x, p.y); cx2.rotate(ang);
+    cx2.fillStyle = PAL.diafragma;
+    cx2.beginPath();
+    const boca = abierto * .8;
     for (let k = 0; k <= 6; k++) {
       const a = boca + k * (2 * Math.PI - 2 * boca) / 6;
       const vx = Math.cos(a) * r, vy = Math.sin(a) * r;
-      k ? cx.lineTo(vx, vy) : cx.moveTo(vx, vy);
+      k ? cx2.lineTo(vx, vy) : cx2.moveTo(vx, vy);
     }
-    if (boca > .02) cx.lineTo(0, 0);
-    cx.closePath(); cx.fill();
-    /* hojas del diafragma */
-    cx.strokeStyle = 'rgba(10,10,11,.22)'; cx.lineWidth = Math.max(.8, CEL * .04);
+    if (boca > .02) cx2.lineTo(0, 0);
+    cx2.closePath(); cx2.fill();
+    cx2.strokeStyle = PAL.hoja; cx2.lineWidth = Math.max(.8, CEL * .04);
     for (let k = 2; k < 6; k += 2) {
       const a = boca + k * (2 * Math.PI - 2 * boca) / 6;
-      cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(Math.cos(a) * r * .82, Math.sin(a) * r * .82); cx.stroke();
+      cx2.beginPath(); cx2.moveTo(0, 0); cx2.lineTo(Math.cos(a) * r * .82, Math.sin(a) * r * .82); cx2.stroke();
     }
-    cx.restore();
+    cx2.restore();
   }
-  function dron(p, k, miedo) {
+  function dron(p, k, miedo, soloOjos) {
     const r = CEL * .36;
-    cx.fillStyle = miedo ? '#3A3A42' : ['#A8705E', '#4E6E80', '#6E8C5A'][k % 3];
-    cx.beginPath();
-    if (cx.roundRect) cx.roundRect(p.x - r, p.y - r * .8, r * 2, r * 1.6, r * .4);
-    else cx.rect(p.x - r, p.y - r * .8, r * 2, r * 1.6);
-    cx.fill();
-    /* rotores */
-    cx.strokeStyle = miedo ? '#5A5750' : 'rgba(10,10,11,.5)';
-    cx.lineWidth = Math.max(1, CEL * .07);
-    cx.beginPath(); cx.moveTo(p.x - r, p.y - r); cx.lineTo(p.x - r * .35, p.y - r); cx.stroke();
-    cx.beginPath(); cx.moveTo(p.x + r * .35, p.y - r); cx.lineTo(p.x + r, p.y - r); cx.stroke();
-    /* lente */
-    cx.fillStyle = miedo ? '#9A968E' : '#0A0A0B';
-    cx.beginPath(); cx.arc(p.x, p.y, r * .42, 0, 7); cx.fill();
-    if (!miedo) { cx.fillStyle = 'rgba(242,240,236,.75)'; cx.beginPath(); cx.arc(p.x - r * .13, p.y - r * .13, r * .13, 0, 7); cx.fill(); }
+    if (!soloOjos) {
+      cx2.fillStyle = miedo ? PAL.droneMiedo : PAL.drones[k % 3];
+      cx2.beginPath();
+      if (cx2.roundRect) cx2.roundRect(p.x - r, p.y - r * .8, r * 2, r * 1.6, r * .4);
+      else cx2.rect(p.x - r, p.y - r * .8, r * 2, r * 1.6);
+      cx2.fill();
+      cx2.strokeStyle = miedo ? PAL.droneBordeMiedo : PAL.droneBorde;
+      cx2.lineWidth = Math.max(1, CEL * .07);
+      cx2.beginPath(); cx2.moveTo(p.x - r, p.y - r); cx2.lineTo(p.x - r * .35, p.y - r); cx2.stroke();
+      cx2.beginPath(); cx2.moveTo(p.x + r * .35, p.y - r); cx2.lineTo(p.x + r, p.y - r); cx2.stroke();
+    }
+    cx2.fillStyle = soloOjos ? PAL.punto : (miedo ? PAL.lenteMiedo : PAL.lente);
+    cx2.beginPath(); cx2.arc(p.x, p.y, r * .42, 0, 7); cx2.fill();
+    if (!miedo && !soloOjos) {
+      cx2.fillStyle = PAL.brillo;
+      cx2.beginPath(); cx2.arc(p.x - r * .13, p.y - r * .13, r * .13, 0, 7); cx2.fill();
+    }
+  }
+
+  /* ---------- mando flotante sobre el tablero ---------- */
+  const palanca = { activa: false, x0: 0, y0: 0, x: 0, y: 0, id: null };
+  function dibujarPalanca() {
+    if (!palanca.activa) return;
+    const R1 = CEL * 2.1, R2 = CEL * .95;
+    let dx = palanca.x - palanca.x0, dy = palanca.y - palanca.y0;
+    const d = Math.hypot(dx, dy);
+    if (d > R1) { dx = dx / d * R1; dy = dy / d * R1; }
+    cx2.save();
+    cx2.strokeStyle = PAL.diafragma; cx2.globalAlpha = .16; cx2.lineWidth = Math.max(2, CEL * .12);
+    cx2.beginPath(); cx2.arc(palanca.x0, palanca.y0, R1, 0, 7); cx2.stroke();
+    cx2.globalAlpha = .26; cx2.fillStyle = PAL.diafragma;
+    cx2.beginPath(); cx2.arc(palanca.x0 + dx, palanca.y0 + dy, R2, 0, 7); cx2.fill();
+    cx2.restore();
   }
 
   function pintar() {
-    cx.fillStyle = '#08080A'; cx.fillRect(0, 0, C * CEL, R * CEL);
+    cx2.fillStyle = PAL.labFondo; cx2.fillRect(0, 0, C * CEL, R * CEL);
     paredes();
-    /* fotogramas */
-    cx.fillStyle = 'rgba(242,240,236,.6)';
+    cx2.fillStyle = PAL.punto;
     const s = Math.max(2.5, CEL * .17);
     for (let y = 0; y < R; y++) for (let x = 0; x < C; x++)
-      if (puntos[ix(x, y)]) cx.fillRect((x + .5) * CEL - s / 2, (y + .5) * CEL - s / 2, s, s);
-    /* destellos */
+      if (puntos[ix(x, y)]) cx2.fillRect((x + .5) * CEL - s / 2, (y + .5) * CEL - s / 2, s, s);
     const pulso = .78 + .22 * Math.sin(reloj * 5);
     for (let y = 0; y < R; y++) for (let x = 0; x < C; x++) {
       if (!destellos[ix(x, y)]) continue;
       const a = (x + .5) * CEL, b = (y + .5) * CEL, r = CEL * .36 * pulso;
-      cx.strokeStyle = 'rgba(242,240,236,.9)'; cx.lineWidth = Math.max(1.4, CEL * .09);
-      cx.beginPath();
-      cx.moveTo(a - r, b); cx.lineTo(a + r, b); cx.moveTo(a, b - r); cx.lineTo(a, b + r);
-      cx.moveTo(a - r * .6, b - r * .6); cx.lineTo(a + r * .6, b + r * .6);
-      cx.moveTo(a + r * .6, b - r * .6); cx.lineTo(a - r * .6, b + r * .6);
-      cx.stroke();
+      cx2.strokeStyle = PAL.destello; cx2.lineWidth = Math.max(1.4, CEL * .09);
+      cx2.beginPath();
+      cx2.moveTo(a - r, b); cx2.lineTo(a + r, b); cx2.moveTo(a, b - r); cx2.lineTo(a, b + r);
+      cx2.moveTo(a - r * .6, b - r * .6); cx2.lineTo(a + r * .6, b + r * .6);
+      cx2.moveTo(a + r * .6, b - r * .6); cx2.lineTo(a - r * .6, b + r * .6);
+      cx2.stroke();
     }
-    drones.forEach((d, k) => dron(px(d), k, asustados > 0));
-    const abierto = Math.abs(Math.sin(reloj * 9)) * ((yo.dir[0] || yo.dir[1]) ? 1 : .25);
-    const ang = Math.atan2(yo.dir[1], yo.dir[0]);
-    diafragma(px(yo), abierto, (yo.dir[0] || yo.dir[1]) ? ang : 0);
+    drones.forEach((d, k) => dron(px(d), k, asustados > 0 && !d.ojos, d.ojos));
+    const quieto = !yo.dir[0] && !yo.dir[1];
+    const abierto = Math.abs(Math.sin(reloj * 9)) * (quieto ? .25 : 1);
+    diafragma(px(yo), abierto, quieto ? 0 : Math.atan2(yo.dir[1], yo.dir[0]));
+    dibujarPalanca();
 
     info.innerHTML = '<b>' + tanteo + '</b> &nbsp;·&nbsp; ' + Math.max(0, vidas) +
       (vidas === 1 ? ' vida' : ' vidas') + ' &nbsp;·&nbsp; nivel ' + nivel +
@@ -2054,10 +2615,9 @@ function abrirLaberinto() {
   }
 
   function perder() {
-    vidas--;
-    vibra([70, 60, 70]);
+    vidas--; vibra([70, 60, 70]);
     if (vidas <= 0) { terminar(); return; }
-    colocar(); asustados = 0; pausa = 1;
+    colocar(); asustados = 0; pausa = 1.2;
   }
   function terminar() {
     if (fin) return;
@@ -2067,7 +2627,8 @@ function abrirLaberinto() {
       'Llegaste al nivel ' + nivel + '. Récord: ' + mejor + '.', reiniciar);
   }
   function reiniciar() {
-    tanteo = 0; vidas = 3; nivel = 1; fin = false;
+    tanteo = 0; vidas = 3; nivel = 1; fin = false; enPausa = false;
+    bPausa.textContent = 'Pausa'; bPausa.classList.remove('sel');
     nivelNuevo(); ultimo = performance.now();
     raf = requestAnimationFrame(bucle);
   }
@@ -2078,26 +2639,50 @@ function abrirLaberinto() {
     if (enPausa) { pintar(); return; }
     if (pausa > 0) { pausa -= dt; pintar(); raf = requestAnimationFrame(bucle); return; }
 
-    const vel = 5.1 + (nivel - 1) * .18;
-    mover(yo, vel, dt, elegirYo);
-    const velD = (asustados > 0 ? 2.9 : 4.25 + (nivel - 1) * .3);
-    for (const d of drones) mover(d, velD, dt, elegirDron);
+    /* turnos de acecho y dispersión */
+    relojTurno += dt;
+    if (asustados <= 0 && relojTurno > TURNOS[turno]) { relojTurno = 0; turno = Math.min(turno + 1, TURNOS.length - 1); }
 
-    /* levantar lo que haya en la casilla */
+    const vel = 5.4 + (nivel - 1) * .16;
+    mover(yo, vel, dt, elegirYo);
+
+    for (const d of drones) {
+      if (d.estado === 'casa') {
+        d.espera -= dt;
+        d.y = corral[1] + Math.sin(reloj * 3) * .18;
+        d.ny = d.y;
+        if (d.espera <= 0) { d.estado = 'saliendo'; d.x = d.nx = puerta[0]; d.y = d.ny = corral[1]; d.t = 0; }
+        continue;
+      }
+      if (d.estado === 'saliendo') {
+        d.y -= dt * 3.4; d.ny = d.y;
+        if (d.y <= puerta[1] - 1) { d.y = d.ny = puerta[1] - 1; d.estado = 'fuera'; d.dir = [0, 0]; d.t = 0; }
+        continue;
+      }
+      const vd = d.ojos ? 11 : (asustados > 0 ? 3.1 : (4.6 + (nivel - 1) * .26));
+      const enTunel = d.y === corral[1] && (d.x < 3 || d.x > C - 4);
+      mover(d, enTunel && !d.ojos ? vd * .55 : vd, dt, elegirDron);
+      if (d.ojos && d.x === puerta[0] && d.y === puerta[1]) {
+        d.ojos = false; d.estado = 'casa'; d.espera = 1.2;
+        d.y = d.ny = corral[1]; d.x = d.nx = corral[0]; d.t = 0; d.dir = [0, 0];
+      }
+    }
+
     const i = ix(yo.x, yo.y);
     if (puntos[i]) { puntos[i] = 0; quedan--; tanteo += 10; }
-    if (destellos[i]) { destellos[i] = 0; asustados = 6; tanteo += 50; vibra(14); }
+    if (destellos[i]) {
+      destellos[i] = 0; asustados = Math.max(3, 8 - nivel * .4); tanteo += 50; vibra(14);
+      for (const d of drones) if (d.estado === 'fuera' && !d.ojos) d.dir = [-d.dir[0], -d.dir[1]];
+    }
     if (asustados > 0) asustados = Math.max(0, asustados - dt);
 
-    /* encuentros */
     const pa = px(yo);
     for (const d of drones) {
+      if (d.estado !== 'fuera' || d.ojos) continue;
       const pb = px(d);
-      if (Math.hypot(pa.x - pb.x, pa.y - pb.y) > CEL * .72) continue;
-      if (asustados > 0) {
-        tanteo += 200; vibra(20);
-        d.x = d.nx = d.casa[0]; d.y = d.ny = d.casa[1]; d.t = 0; d.dir = [0, 0];
-      } else { perder(); break; }
+      if (Math.hypot(pa.x - pb.x, pa.y - pb.y) > CEL * .7) continue;
+      if (asustados > 0) { tanteo += 200; vibra(20); d.ojos = true; }
+      else { perder(); break; }
     }
 
     if (quedan === 0 && !fin) { nivel++; tanteo += 500; nivelNuevo(); }
@@ -2105,22 +2690,48 @@ function abrirLaberinto() {
     raf = requestAnimationFrame(bucle);
   }
 
-  /* gestos y teclado */
-  let t0 = null;
-  cv.addEventListener('pointerdown', e => { t0 = { x: e.clientX, y: e.clientY }; }, { passive: true });
-  cv.addEventListener('pointerup', e => {
-    if (!t0 || fin) return;
-    const dx = e.clientX - t0.x, dy = e.clientY - t0.y;
-    if (Math.abs(dx) > 14 || Math.abs(dy) > 14)
-      yo.pedida = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)];
-    t0 = null;
-  }, { passive: true });
+  /* ---------- entrada ---------- */
+  const aLienzo = e => {
+    const r = cv.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+  cv.addEventListener('pointerdown', e => {
+    if (fin) return;
+    e.preventDefault();
+    const p = aLienzo(e);
+    palanca.activa = true; palanca.id = e.pointerId;
+    palanca.x0 = p.x; palanca.y0 = p.y; palanca.x = p.x; palanca.y = p.y;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) { }
+  });
+  cv.addEventListener('pointermove', e => {
+    if (!palanca.activa || e.pointerId !== palanca.id) return;
+    const p = aLienzo(e);
+    palanca.x = p.x; palanca.y = p.y;
+    const dx = p.x - palanca.x0, dy = p.y - palanca.y0;
+    if (Math.hypot(dx, dy) < CEL * .55) return;
+    const d = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx), 0] : [0, Math.sign(dy)];
+    if (!yo.pedida || yo.pedida[0] !== d[0] || yo.pedida[1] !== d[1]) { yo.pedida = d; vibra(3); }
+  });
+  const soltarPalanca = e => {
+    if (e.pointerId !== palanca.id) return;
+    palanca.activa = false; palanca.id = null;
+  };
+  cv.addEventListener('pointerup', soltarPalanca);
+  cv.addEventListener('pointercancel', soltarPalanca);
+
   const teclas = e => {
     const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
     if (!d || fin) return;
     e.preventDefault(); yo.pedida = d;
   };
   addEventListener('keydown', teclas);
+  mando(bPausa, () => {
+    if (fin) return;
+    enPausa = !enPausa;
+    bPausa.textContent = enPausa ? 'Seguir' : 'Pausa';
+    bPausa.classList.toggle('sel', enPausa);
+    if (!enPausa) { ultimo = performance.now(); raf = requestAnimationFrame(bucle); }
+  });
   const alRedimensionar = () => { medir(); pintar(); };
   addEventListener('resize', alRedimensionar);
 
@@ -2182,16 +2793,17 @@ function fit() {
 }
 addEventListener('resize', fit);
 const ORBS = [
-  { r: .62, x: .28, y: .30, sx: .021, sy: .014, c: '255,232,205', a: .085 },
-  { r: .50, x: .74, y: .62, sx: -.017, sy: .019, c: '214,226,255', a: .062 },
-  { r: .42, x: .52, y: .84, sx: .013, sy: -.011, c: '255,214,178', a: .055 },
-  { r: .34, x: .16, y: .72, sx: .019, sy: -.016, c: '238,238,238', a: .040 }
+  { r: .62, x: .28, y: .30, sx: .021, sy: .014 },
+  { r: .50, x: .74, y: .62, sx: -.017, sy: .019 },
+  { r: .42, x: .52, y: .84, sx: .013, sy: -.011 },
+  { r: .34, x: .16, y: .72, sx: .019, sy: -.016 }
 ];
 function drawBG(t) {
-  bx.fillStyle = '#0A0A0B'; bx.fillRect(0, 0, W, H);
+  bx.fillStyle = PAL.fondo; bx.fillRect(0, 0, W, H);
   const S = Math.max(W, H);
-  bx.globalCompositeOperation = 'lighter';
-  for (const o of ORBS) {
+  bx.globalCompositeOperation = PAL.mezcla;
+  for (let k = 0; k < ORBS.length; k++) {
+    const o = ORBS[k]; o.c = PAL.orbes[k]; o.a = PAL.alfas[k];
     const cx2 = (o.x + Math.sin(t * o.sx * 6.2) * .13) * W;
     const cy2 = (o.y + Math.cos(t * o.sy * 6.2) * .11) * H;
     const rr = o.r * S * (.52 + .05 * Math.sin(t * .22 + o.x * 9));
@@ -2205,12 +2817,12 @@ function drawBG(t) {
   const sweep = ((t * .045) % 1.5) - .25;
   const gx = bx.createLinearGradient(sweep * W - W * .3, 0, sweep * W + W * .3, H);
   gx.addColorStop(0, 'rgba(255,255,255,0)');
-  gx.addColorStop(.5, 'rgba(255,246,232,.028)');
+  gx.addColorStop(.5, PAL.barrido);
   gx.addColorStop(1, 'rgba(255,255,255,0)');
   bx.fillStyle = gx; bx.fillRect(0, 0, W, H);
   const bd = bx.createLinearGradient(0, H * .30, 0, H);
-  bd.addColorStop(0, 'rgba(10,10,11,0)');
-  bd.addColorStop(1, 'rgba(10,10,11,.52)');
+  bd.addColorStop(0, 'rgba(' + PAL.base + ',0)');
+  bd.addColorStop(1, 'rgba(' + PAL.base + ',' + PAL.baseAlfa + ')');
   bx.fillStyle = bd; bx.fillRect(0, 0, W, H);
 }
 const gr = document.getElementById('grain'), gx2 = gr.getContext('2d');
@@ -2227,6 +2839,15 @@ function loop(now) {
   if (now - gt > 90) { drawGrain(); gt = now; }
   requestAnimationFrame(loop);
 }
+modoTema = mem.get('tema', 'auto');
+if (['auto', 'claro', 'oscuro'].indexOf(modoTema) < 0) modoTema = 'auto';
+aplicarTema();
+if (btnTema) btnTema.onclick = () => {
+  modoTema = modoTema === 'auto' ? 'claro' : modoTema === 'claro' ? 'oscuro' : 'auto';
+  mem.set('tema', modoTema);
+  aplicarTema(); vibra(8);
+};
+
 fit(); grainFit(); drawGrain(); textoReloj();
 requestAnimationFrame(loop);
 
@@ -2236,4 +2857,3 @@ requestAnimationFrame(loop);
 </script>
 </body>
 </html>
-
