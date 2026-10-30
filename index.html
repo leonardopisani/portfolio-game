@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0A0A0B">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -54,14 +54,14 @@
     --bg:#0A0A0B;
     --ink:#F2F0EC;
     --sobre:#0A0A0B;        /* texto sobre un relleno de tinta */
-    --mut:#9A968E;
-    --dim:#5A5750;
+    --mut:#ABA69C;
+    --dim:#8C877D;
     --line:rgba(242,240,236,.14);
     --line2:rgba(242,240,236,.07);
     --borde:rgba(242,240,236,.28);
     --celLinea:rgba(242,240,236,.09);
-    --reja:var(--reja);     /* líneas gruesas de cuadrícula */
-    --reja2:var(--reja2);   /* líneas finas */
+    --reja:rgba(242,240,236,.3);     /* líneas gruesas de cuadrícula */
+    --reja2:rgba(242,240,236,.08);   /* líneas finas */
     --mal:#C8705F;
     --malBg:#2A1512;
     --ok:#7E9E7A;
@@ -88,7 +88,7 @@
     :root:not([data-tema="oscuro"]){
       color-scheme:light;
       --bg:#F4F2ED; --ink:#1A1916; --sobre:#F4F2ED;
-      --mut:#6A665E; --dim:#9B968C;
+      --mut:#4F4B44; --dim:#67625A;
       --line:rgba(26,25,22,.17); --line2:rgba(26,25,22,.08);
       --borde:rgba(26,25,22,.34);
       --celLinea:rgba(26,25,22,.12);
@@ -107,7 +107,7 @@
   :root[data-tema="claro"]{
     color-scheme:light;
     --bg:#F4F2ED; --ink:#1A1916; --sobre:#F4F2ED;
-    --mut:#6A665E; --dim:#9B968C;
+    --mut:#4F4B44; --dim:#67625A;
     --line:rgba(26,25,22,.17); --line2:rgba(26,25,22,.08);
     --borde:rgba(26,25,22,.34);
     --celLinea:rgba(26,25,22,.12);
@@ -141,36 +141,38 @@
     justify-content:center;gap:12px;padding:0 14px}
 
   /* ================= cabecera ================= */
-  header{height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:space-between;
+  header{height:58px;flex:0 0 58px;display:flex;align-items:center;justify-content:space-between;
     padding:0 16px;gap:10px}
   .volver{display:flex;align-items:center;gap:7px}
   .volver i{font-style:normal;font-size:13px;line-height:1;letter-spacing:0;text-indent:0}
-  .titulo{font-size:10px;letter-spacing:.34em;text-indent:.34em;color:var(--mut);
+  .titulo{font-size:13px;letter-spacing:.34em;text-indent:.34em;color:var(--mut);
     text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
   .cab{flex:1;min-width:0;text-align:center}
   .der{display:flex;align-items:center;gap:8px}
-  .btn.chico{min-height:34px;padding:0 12px;font-size:9px;letter-spacing:.16em;
-    text-indent:.16em;white-space:nowrap}
-  .ayuda{width:30px;height:30px;flex:0 0 30px;border-radius:50%;background:none;
+  /* 44 px es el mínimo que un pulgar acierta sin mirar; nada interactivo
+     baja de ahí, por chiquito que se vea el texto */
+  .btn.chico{min-height:44px;padding:0 13px;font-size:11.5px;letter-spacing:.14em;
+    text-indent:.14em;white-space:nowrap}
+  .ayuda{width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:none;
     border:1px solid var(--line);color:var(--mut);font:inherit;font-size:13px;line-height:1;
     cursor:pointer;transition:color .25s,border-color .25s}
   .ayuda:hover,.ayuda:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
   #btnTema{display:flex;align-items:center;justify-content:center}
   #btnTema svg{width:16px;height:16px}
   #btnTema svg[viewBox^='0 0 38']{width:21px}
-  .regla{flex:0 0 auto;margin:-2px auto 4px;padding:0 20px;text-align:center;
-    font-size:10.5px;line-height:1.5;letter-spacing:.04em;color:var(--dim);
+  .regla{flex:0 0 auto;margin:-2px auto 5px;padding:0 20px;text-align:center;
+    font-size:12.5px;line-height:1.5;letter-spacing:.03em;color:var(--mut);
     max-width:440px}
 
   /* ================= reloj ================= */
   .reloj{display:flex;align-items:center;gap:7px;border:1px solid var(--line);
-    padding:7px 11px;background:none;cursor:pointer;color:var(--mut);font:inherit;
-    font-size:11px;letter-spacing:.12em;font-variant-numeric:tabular-nums;
+    min-height:44px;padding:0 13px;background:none;cursor:pointer;color:var(--mut);font:inherit;
+    font-size:12px;letter-spacing:.12em;font-variant-numeric:tabular-nums;
     transition:color .25s,border-color .25s}
   .reloj:hover,.reloj:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
   .reloj.activo{color:var(--ink);border-color:var(--reja)}
-  .reloj.cerca{color:var(--aviso);border-color:color-mix(in srgb,var(--aviso) 45%,transparent)}
+  .reloj.cerca{color:var(--aviso);border-color:var(--aviso);opacity:.92}
   .reloj .pt{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.55}
   .reloj.activo .pt{animation:lat 2s ease-in-out infinite}
   @keyframes lat{0%,100%{opacity:.25}50%{opacity:1}}
@@ -178,12 +180,12 @@
   /* ================= portada ================= */
   .intro{text-align:center;display:flex;flex-direction:column;align-items:center;gap:13px}
   .intro{gap:0}
-  .intro .nombre{font-size:clamp(15px,4.4vw,19px);font-weight:400;letter-spacing:.3em;
+  .intro .nombre{font-size:clamp(17px,5vw,22px);font-weight:400;letter-spacing:.3em;
     text-indent:.26em;white-space:nowrap}
-  .intro .oficio{margin-top:9px;font-size:8.5px;letter-spacing:.38em;text-indent:.38em;
+  .intro .oficio{margin-top:9px;font-size:13px;letter-spacing:.38em;text-indent:.38em;
     color:var(--dim);text-transform:uppercase}
   .intro .hr{width:28px;height:1px;background:var(--line);margin:16px 0}
-  .intro .porque{font-size:11.5px;line-height:1.75;letter-spacing:.045em;color:var(--mut);
+  .intro .porque{font-size:13px;line-height:1.75;letter-spacing:.045em;color:var(--mut);
     max-width:300px}
 
   .tiras{display:flex;flex-direction:column;gap:9px;width:100%;max-width:360px}
@@ -194,7 +196,7 @@
   .tile svg{width:22px;height:22px;overflow:visible}
   .tile .ic{flex:0 0 28px;display:flex;justify-content:center}
   .tile .ic svg[viewBox^='0 0 38']{width:30px}
-  .tile .nm{font-size:9.5px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;
+  .tile .nm{font-size:12px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;
     position:relative;z-index:3;text-align:left}
   .tile .ic{position:relative;z-index:3;line-height:0}
   .tile::after{content:'';position:absolute;inset:-1px;z-index:1;background:var(--ink);
@@ -207,11 +209,11 @@
   .tile.press{border-color:var(--ink);color:var(--sobre)}
   .tile.press::after{transform:scaleY(1)}
   .tile:active{transform:scale(.978)}
-  .tile:focus-visible{outline:1px solid var(--ink);outline-offset:4px}
+  .tile:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 
-  .azar{background:none;border:0;cursor:pointer;color:var(--dim);font:inherit;font-size:9.5px;
-    letter-spacing:.3em;text-indent:.3em;text-transform:uppercase;padding:9px 6px;
-    transition:color .25s}
+  .azar{background:none;border:0;cursor:pointer;color:var(--mut);font:inherit;font-size:11.5px;
+    letter-spacing:.28em;text-indent:.28em;text-transform:uppercase;
+    min-height:44px;padding:0 14px;transition:color .25s}
   .azar:hover,.azar:focus-visible{color:var(--mut);outline:none}
 
   /* ================= accesos (idénticos a la portada) ================= */
@@ -219,7 +221,7 @@
     padding:0 0 4px}
   .lnk{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;
     height:clamp(58px,9.1vh,78px);text-decoration:none;letter-spacing:.30em;text-indent:.30em;
-    font-size:clamp(11.5px,3.4vw,13.5px);font-weight:400;text-transform:uppercase;
+    font-size:clamp(12.5px,3.6vw,14.5px);font-weight:400;text-transform:uppercase;
     color:var(--ink);background:transparent;border:1px solid var(--borde);
     will-change:transform;
     transition:transform .32s cubic-bezier(.2,.75,.3,1),color .3s ease,border-color .3s ease,
@@ -233,7 +235,7 @@
     transition:transform .42s cubic-bezier(.2,.75,.3,1)}
   .lnk::before{content:'';position:absolute;top:0;bottom:0;width:46%;z-index:2;left:-60%;
     pointer-events:none;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);
+    background:linear-gradient(100deg,transparent,rgba(127,127,127,.22),transparent);
     animation:sheen 5.4s ease-in-out infinite}
   .lnk:nth-child(2)::before{animation-delay:2.2s}
   @keyframes sheen{0%{left:-60%}52%{left:120%}100%{left:120%}}
@@ -249,7 +251,7 @@
   .lnk.press::after{transform:scaleY(1)}
   .lnk.press .arw{transform:translateX(8px);opacity:1}
   .lnk:active{transform:scale(.976);transition-duration:.09s}
-  .lnk:focus-visible{outline:1px solid var(--ink);outline-offset:5px}
+  .lnk:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
   .rip{position:absolute;z-index:2;border-radius:50%;pointer-events:none;
     background:var(--onda);
     transform:translate(-50%,-50%) scale(0);animation:rip .62s cubic-bezier(.2,.7,.3,1) forwards}
@@ -258,19 +260,19 @@
   /* barra fina de accesos dentro de un juego */
   .barra{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
     border-top:1px solid var(--line2);padding:0}
-  .firma{font-size:8px;letter-spacing:.24em;text-indent:.24em;color:var(--dim);
+  .firma{font-size:12px;letter-spacing:.24em;text-indent:.24em;color:var(--dim);
     text-transform:uppercase;text-align:center;padding:0 16px}
   .barraLinks{display:flex;align-items:center;justify-content:center;width:100%}
   .barra a{flex:1;max-width:190px;text-align:center;text-decoration:none;color:var(--mut);
-    font-size:9.5px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;
-    line-height:42px;transition:color .25s}
+    font-size:12px;letter-spacing:.26em;text-indent:.26em;text-transform:uppercase;
+    line-height:50px;transition:color .25s}
   .barra a:hover,.barra a:focus-visible{color:var(--ink);outline:none}
   .barra .sep{width:1px;height:16px;background:var(--line)}
 
   /* ================= controles de juego ================= */
   .fila{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
   .btn{background:none;border:1px solid var(--line);color:var(--mut);font:inherit;
-    font-size:10px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
+    font-size:13px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
     min-height:48px;padding:0 15px;cursor:pointer;touch-action:manipulation;
     transition:color .18s,border-color .18s,background .18s}
   .btn:hover,.btn:focus-visible{color:var(--ink);border-color:var(--reja);outline:none}
@@ -280,7 +282,7 @@
   .seg{display:inline-flex;border:1px solid var(--line);overflow:hidden}
   .seg .btn{border:0;border-left:1px solid var(--line);min-height:44px;padding:0 17px}
   .seg .btn:first-child{border-left:0}
-  .dato{font-size:10px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;
+  .dato{font-size:13px;letter-spacing:.2em;color:var(--dim);text-transform:uppercase;
     font-variant-numeric:tabular-nums}
   .dato b{color:var(--ink);font-weight:700}
 
@@ -296,7 +298,7 @@
 
   /* --- sudoku --- */
   #sudTab{border-width:1px}
-  #sudTab .cel{font-size:min(5.2vw,25px);font-weight:400;color:var(--ink);
+  #sudTab .cel{font-size:min(5.8vw,28px);font-weight:400;color:var(--ink);
     box-shadow:inset 0 0 0 .5px var(--reja2)}
   #sudTab .cel.fija{color:var(--mut);font-weight:400}
   #sudTab .cel.br{box-shadow:inset 0 0 0 .5px var(--reja2),
@@ -313,7 +315,7 @@
   .notas{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);
     grid-template-rows:repeat(3,1fr);pointer-events:none}
   .notas span{display:flex;align-items:center;justify-content:center;
-    font-size:min(2.1vw,10px);color:var(--dim);line-height:1}
+    font-size:min(2.4vw,11px);color:var(--dim);line-height:1}
 
   /* --- reinas --- */
   #reiTab{touch-action:none}
@@ -350,8 +352,12 @@
   /* --- bloques --- */
   #labCv{display:block;border:1px solid var(--line);touch-action:none}
   #blqCv{display:block;image-rendering:auto;border:1px solid var(--borde)}
+  /* las acciones en rejilla: se reparten el ancho en vez de caerse de a una */
+  .acciones{display:grid;grid-template-columns:repeat(auto-fit,minmax(76px,1fr));
+    gap:7px;width:100%;max-width:420px}
+  .acciones .btn{padding:0 6px;letter-spacing:.07em;text-indent:.07em;min-width:0}
   .tecl{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;width:100%;max-width:400px}
-  .tecl .btn{padding:0;letter-spacing:0;text-indent:0;font-size:19px;font-weight:400;
+  .tecl .btn{padding:0;letter-spacing:0;text-indent:0;font-size:21px;font-weight:400;
     min-width:0;min-height:clamp(44px,6.4vh,56px)}
   .tecl .btn.gastada{opacity:.26}
   .tecl .btn.borrar{font-size:16px}
@@ -368,9 +374,10 @@
   .cruz .de{grid-area:2/3/3/4}
   .cruz .ab{grid-area:3/2/4/3}
   .filaInfo{display:flex;align-items:center;justify-content:center;gap:14px}
-  .caja{display:flex;flex-direction:column;align-items:center;gap:4px;
+  .caja{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    min-height:44px;min-width:46px;
     background:none;border:0;padding:0;cursor:pointer;color:inherit;font:inherit}
-  .caja span{font-size:7px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
+  .caja span{font-size:12px;letter-spacing:.2em;text-indent:.2em;text-transform:uppercase;
     color:var(--dim)}
   .caja.gastada{opacity:.35}
   #blqNext,#blqHold{display:block;opacity:.9}
@@ -388,18 +395,18 @@
     background:var(--velo);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
   .capa.on{display:flex;animation:ap .4s ease both}
   @keyframes ap{from{opacity:0}to{opacity:1}}
-  .capa h2{font-size:15px;font-weight:400;letter-spacing:.3em;text-indent:.3em;
+  .capa h2{font-size:16.5px;font-weight:400;letter-spacing:.3em;text-indent:.3em;
     text-transform:uppercase}
-  .capa p{font-size:11px;letter-spacing:.1em;color:var(--mut);line-height:1.8;max-width:290px}
+  .capa p{font-size:12px;letter-spacing:.1em;color:var(--mut);line-height:1.8;max-width:290px}
   .capa .hoja{width:100%;max-width:360px;max-height:82vh;overflow-y:auto;
     display:flex;flex-direction:column;align-items:center;gap:18px;
     -webkit-overflow-scrolling:touch}
   .capa ol{list-style:none;counter-reset:r;width:100%;display:flex;
     flex-direction:column;gap:15px;text-align:left}
   .capa ol li{counter-increment:r;position:relative;padding-left:26px;
-    font-size:12.5px;line-height:1.72;letter-spacing:.02em;color:var(--mut)}
+    font-size:13.5px;line-height:1.72;letter-spacing:.02em;color:var(--mut)}
   .capa ol li::before{content:counter(r);position:absolute;left:0;top:0;
-    font-size:10px;line-height:1.95;color:var(--dim);font-variant-numeric:tabular-nums}
+    font-size:13px;line-height:1.95;color:var(--dim);font-variant-numeric:tabular-nums}
   .capa ol li b{color:var(--ink);font-weight:700}
   .sim{display:inline-flex;vertical-align:-3px;width:15px;height:15px;margin:0 1px;
     color:var(--ink)}
@@ -420,9 +427,14 @@
     .lnk,.arw,.lnk::after,.tile,.tile::after{transition-duration:.01s}
   }
   @media (max-height:700px){
+    header{height:50px;flex:0 0 50px}
+    .btn{min-height:44px}
+    .barra a{line-height:46px}
+    .mid{gap:9px}
+    .regla{margin:-2px auto 3px;font-size:12px;line-height:1.42}
     .tiras{gap:7px}.tile{padding:0 16px;gap:12px}
     .intro .hr{margin:11px 0}
-    .intro .porque{font-size:10.5px;line-height:1.6}
+    .intro .porque{font-size:12px;line-height:1.6}
     .intro .nombre{font-size:16px}
   }
 </style>
@@ -523,7 +535,7 @@
      href="https://leopisani.myportfolio.com" data-same="1">
 <span class="label">Portfolio</span><span class="arw">→</span></a>
   <a class="waLink" target="_blank" rel="noopener"
-     style="color:var(--mut);text-decoration:none;font-size:9.5px;letter-spacing:.26em;
+     style="color:var(--mut);text-decoration:none;font-size:12px;letter-spacing:.26em;
             text-indent:.26em;text-transform:uppercase;padding:4px">WhatsApp</a>
 </div>
 
@@ -584,10 +596,32 @@ if (prefiereClaro && prefiereClaro.addEventListener)
    seguís donde estabas. Se guarda en el teléfono, no sale de ahí.
    ========================================================================= */
 const partida = {
+  _esperas: {}, _pendiente: {},
   leer(id) { return mem.get('part_' + id, null); },
-  poner(id, d) { mem.set('part_' + id, d); },
-  tirar(id) { mem.borrar('part_' + id); }
+  /* localStorage escribe de forma síncrona: hacerlo en cada repintado
+     trababa el arrastre en teléfonos modestos. Se agrupa cada 400 ms,
+     pero lo pendiente se vuelca entero apenas la pestaña se va o pasa a
+     segundo plano: si no, el último toque antes de cerrar se pierde. */
+  poner(id, d) {
+    this._pendiente[id] = d;
+    clearTimeout(this._esperas[id]);
+    this._esperas[id] = setTimeout(() => this.volcar(id), 400);
+  },
+  volcar(id) {
+    if (!(id in this._pendiente)) return;
+    clearTimeout(this._esperas[id]);
+    mem.set('part_' + id, this._pendiente[id]);
+    delete this._pendiente[id];
+  },
+  volcarTodo() { for (const id in this._pendiente) this.volcar(id); },
+  tirar(id) {
+    clearTimeout(this._esperas[id]);
+    delete this._pendiente[id];
+    mem.borrar('part_' + id);
+  }
 };
+addEventListener('pagehide', () => partida.volcarTodo());
+addEventListener('visibilitychange', () => { if (document.hidden) partida.volcarTodo(); });
 
 /* ---------- utilidades ---------- */
 function shuffle(a, rnd) {
@@ -1330,6 +1364,7 @@ const PIEZAS = [
 function abrirBloques() {
   const COL = 10, FIL = 20;
   const cv = el('canvas'); cv.id = 'blqCv';
+  cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Tablero de bloques');
   areaJuego.appendChild(cv);
   const barraInfo = el('div', 'filaInfo');
   const cajaR = el('button', 'caja');
@@ -1601,7 +1636,7 @@ function abrirReinas() {
   areaJuego.appendChild(tab); areaJuego.appendChild(aviso);
 
   let historia = [];
-  const fila = el('div', 'fila');
+  const fila = el('div', 'fila acciones');
   const bDeshacer = el('button', 'btn', 'Deshacer');
   const bPista = el('button', 'btn', 'Pista');
   const bLimpiar = el('button', 'btn', 'Limpiar');
@@ -1814,12 +1849,12 @@ function abrirSudoku() {
   mando(bBorrar, () => poner(0));
   filaNum.appendChild(bBorrar);
 
-  const filaAcc = el('div', 'fila');
+  const filaAcc = el('div', 'fila acciones');
   const bDeshacer = el('button', 'btn', 'Deshacer');
   const bNota = el('button', 'btn', 'Notas');
   const bPista = el('button', 'btn', 'Pista');
   const bNuevo = el('button', 'btn', 'Otro');
-  const bBajar = el('button', 'btn', 'Más fácil');
+  const bBajar = el('button', 'btn', 'Bajar');
   mando(bPista, () => {
     if (!listo) return;
     /* destapa la casilla elegida; si no hay ninguna, una al azar */
@@ -1996,7 +2031,7 @@ function abrirSolLuna() {
   const aviso = el('div', 'dato');
   areaJuego.append(wrap, aviso);
 
-  const fila = el('div', 'fila');
+  const fila = el('div', 'fila acciones');
   const bDeshacer = el('button', 'btn', 'Deshacer');
   const bPista = el('button', 'btn', 'Pista');
   const bNuevo = el('button', 'btn', 'Otro');
@@ -2349,6 +2384,7 @@ function genLaberinto(C, R) {
 function abrirLaberinto() {
   const C = LAB_C, R = LAB_R;
   const cv = el('canvas'); cv.id = 'labCv';
+  cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', 'Tablero del laberinto');
   const info = el('div', 'dato');
   areaJuego.append(cv, info);
 
@@ -2833,10 +2869,15 @@ function drawGrain() {
   gx2.putImageData(im, 0, 0);
 }
 addEventListener('resize', grainFit);
-let t0 = performance.now(), gt = 0;
+/* El fondo es atmósfera, no animación: a 24 cuadros por segundo se ve
+   igual y deja de competir por la batería con el juego que está arriba.
+   Y si el teléfono pide menos movimiento, se dibuja una sola vez. */
+let t0 = performance.now(), gt = 0, bt = 0;
+const quieto = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 function loop(now) {
-  drawBG((now - t0) / 1000);
-  if (now - gt > 90) { drawGrain(); gt = now; }
+  if (quieto) { if (!bt) { drawBG(0); drawGrain(); bt = 1; } return; }
+  if (now - bt > 41) { drawBG((now - t0) / 1000); bt = now; }
+  if (now - gt > 110) { drawGrain(); gt = now; }
   requestAnimationFrame(loop);
 }
 modoTema = mem.get('tema', 'auto');
